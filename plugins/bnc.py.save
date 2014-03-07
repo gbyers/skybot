@@ -1,0 +1,98 @@
+# -- coding: utf8 --
+from util import hook, timesince
+import time, re, random
+
+tmpusr = {}
+
+"""
+    status
+    0 - rejected
+    1 - accepted
+    2 - pending
+"""
+
+@hook.event("PRIVMSG")
+def bnc(inp, input=None, db=None, conn=None, pm=None):
+    db.execute("create table if not exists bnc(nick primary key, username, pin, host, status, created, banned, reason)")
+    cmd = inp[1].split(" ")[0]
+    if inp[1].count(" ") >= 1:
+        txt = inp[1].split(" ",1)[1]
+    else:
+        txt = inp[1]
+    if inp[0] == conn.nick:
+        if cmd == "!request" and txt == "!request":
+            pm("To request a BNC type !request <username>")
+            pm("<username> must contain numbers and letters and be between 4 and 12 numbers/letters long.")
+        if cmd == "!request" and txt is not cmd:
+            username = txt
+            username = re.sub("[^\w]", "", username)
+            tmpusr[input.nick] = username
+            exist = db.execute("select username from bnc where username=lower(?)", (username,)).fetchone()
+            if not exist:
+                if len(username) >= 4 and len(username) <= 12:
+                    pm("You have requested the username \002%s\002."%tmpusr[input.nick])
+                    pm("If this is correct type !confirm, if not !request <username>")
+                else:
+                    pm("The username is too short or too long, it should be between 4 and 12 numbers/letters long.")
+            else:
+                pm("Username is already taken, try again with a different one.")
+        if cmd == "!confirm" and txt == "!confirm":
+            if tmpusr.has_key(input.nick):
+                pm("Your account has been requested. When it has been accepted you will get a pm.")
+                pm("If at any point you want to check the status of your account, type !status %s"%tmpusr[input.nick])
+                db.execute("insert into bnc(nick,username,pin,host,status,created,banned,reason) values (?,?,0,?,?,?,?,?)",
+                    (input.nick.lower(),tmpusr[input.nick],input.prefix[1:],2,int(time.time()),0,None))
+                db.commit()
+            else:
+                pm("You have not requested an account yet, type !request to do so.")
+        if cmd == "!status" and txt is not "!status":
+            user = db.execute("select username, status, created, banned, reason from bnc where username=(?)", (txt,)).fetchone()
+            if user:
+                if user[3] == 1: banned = "Yes"
+                else: banned = "No"
+                if user[4]: reason = user[4]
+                else: reason = "n/a"
+                if user[1] == 0: status = "Rejected"
+                elif user[1] == 1: status = "Accepted"
+                elif user[1] == 2: status = "Pending"
+                else: status = user[1]
+                out = "Username: \002%s\002, Age: \002%s\002 old, Status: \002%s\002, Banned: \002%s\002, Reason: \002%s\002"%(user[0],timesince.timesince(user[2]),status,banned,reason)
+                pm(out)
+            else:
+                pm("Sorry but I do not know that username.")
+        if input.prefix[1:] in ["cups!~cups@unaffiliated/cups","nathan!nathan@F86D1CB7.E7072F54.A84B1A07.IP"]:
+            if cmd == "!pending" and txt == cmd:
+                userlist = db.execute("select nick,username,created from bnc where status=2").fetchall()
+                if userlist:
+                    for user in userlist:
+                        out = "Username: \002%s\002, Requested: \002%s\002 ago, From: \002%s\002"%(user[1],timesince.timesince(user[2]),user[0])
+                        pm(out)
+                else:
+                    pm("No accounts pending.")
+            if cmd == "!accept" and txt is not cmd:
+                user = db.execute("select nick,username,created from bnc where nick=(?)",(txt,)).fetchone()
+                if user:
+                    userpass = ''
+                    for i in range(8):
+                        userpass += random.choice('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789')
+                    db.execute("update bnc set status=1 where username=(?)",(txt,))
+                    db.commit()
+                    pm("%s has been accepted and a pm sent."%user[0])
+                    conn.msg("*status","AddUser %s %s"%(user[0].lower(),userpass))
+                    conn.msg(user[0],"Your account has been accpeted. Login details are:")
+                    conn.msg(user[0],"Server: znc.pond.sx, Port: 5499 (Non-SSL) or 5500 (SSL), Username: %s, Password: %s"%(user[1],userpass))
+                    conn.msg(user[0],"Make sure you change your password after you login at http://znc.pond.sx:5499 or https://znc.pond.sx:5500")
+            if cmd == "!reject" and txt is not cmd:
+                if txt.count(" ") >= 1:
+                    usr = txt.split(" ")[0]
+                    rejectreason = txt.split(" ",1)[1]
+                else:
+                    usr = txt
+                    rejectreason = "n/a"
+                user = db.execute("select nick,username,created from bnc where nick=(?)",(usr,)).fetchone()
+                if user:
+                    db.execute("update bnc set status=0, banned=1, reason=(?) where username=(?)",(rejectreason,usr))
+                    db.commit()
+                    pm("%s has been rejected and a pm sent."%user[0])
+                    conn.msg(user[0],"Your account has been rejected with the following reason:")
+                    conn.msg(user[0],rejectreason)

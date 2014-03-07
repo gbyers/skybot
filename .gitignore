@@ -1,0 +1,11 @@
+.*.swp
+*.pyc
+*.orig
+persist
+config
+config~
+pep8.py
+.project
+.pydevproject
+*.db
+web
