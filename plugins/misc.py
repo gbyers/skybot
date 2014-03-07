@@ -90,7 +90,7 @@ def update(inp, say=None):
     if ver and lupd:
         if ver.group(1)[0:7] != curver:
             say("Current: %s Newest changes: %s - %s"%(curver,lupd.group(3),lupd.group(1)[0:7]))
-            p = subprocess.Popen(['git', 'pull', 'origin'], stdout=subprocess.PIPE)
+            p = subprocess.Popen(['git', 'pull', 'origin', 'master'], stdout=subprocess.PIPE)
             stdout, _ = p.communicate()
             p.wait()
             say("Updated")
