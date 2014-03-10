@@ -114,24 +114,17 @@ def expand(inp, say=None):
 def zeroclick(inp, say=None):
     "zeroclick/0click <search> -- gets zero-click info from DuckDuckGo"
     url = "http://duckduckgo.com/lite?"
-    params = {"q":inp.group(2).encode('utf8', 'ignore')}
+    params = {"q":inp.group(1).encode('utf8', 'ignore')}
     url = "http://duckduckgo.com/lite/?"+urllib.urlencode(params)
     try:
         data = http.get(url)
     except http.HTTPError, e:
         say(str(e)+": "+url)
         return
-    search = re.search("""\t<td>\n\t\s+(.*?)""",data)
-    a = data.replace("\n","").replace("<br>"," ")
-    #search = re.findall("\t<td>(.*?)<\/td>\s+<\/tr>",a)[0]
-    search = re.findall("\s+<tr>\t<td>(.*?)<\/td>\s+<\/tr>",a)
+    search = re.search("""<td>.\t\s+(.*?).</td>""",data,re.M|re.DOTALL)
     if search:
-        answer = HTMLParser.HTMLParser().unescape(search[0].replace("<code>","\002").replace("</code>","\002"))
-        urls = re.search("""href=["|'](.*)["|']""",answer)
-        if urls: url = urls.group(1).strip()
-        else: urls = None
+        answer = HTMLParser.HTMLParser().unescape(search.group(1).replace("<br>"," "))
         answer = re.sub("<[^<]+?>","",answer)
-        #answer = re.sub("<[^<]+?>","",HTMLParser.HTMLParser().unescape(search.group(1).decode('utf8','ignore')))
         out = re.sub("\s+"," ",answer.strip())
         if out: return out.decode("utf8","ignore")
         else: return ("No results")
