@@ -123,7 +123,7 @@ def zeroclick(inp, say=None):
         return
     search = re.findall("""\t<td>.\t\s+(.*?).<\/td>""",data,re.M|re.DOTALL)
     if search:
-        answer = HTMLParser.HTMLParser().unescape(search[-1].replace("<br>"," "))
+        answer = HTMLParser.HTMLParser().unescape(search[-1].replace("<br>"," ").replace("<code">","\002").replace("</code">","\002"))
         answer = re.sub("<[^<]+?>","",answer)
         out = re.sub("\s+"," ",answer.strip())
         if out: return out.decode("utf8","ignore").split(" More at")[0]
