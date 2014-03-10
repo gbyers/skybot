@@ -4,7 +4,6 @@ import subprocess
 import time
 import os
 import commands
-import datetime
 
 from util import hook, http, timesince
 
@@ -105,9 +104,5 @@ def source(inp):
     return "https://github.com/nathan0/skybot"
     
 @hook.command
-def howlongtillxpisdead(inp):
-    return "There is %s left till XP is dead."%(timesince.timeuntil(datetime.datetime(2014, 4, 8, 0, 0)))
-
-@hook.command
-def timetotheendofallthings(inp):
-    return "There is %s left till the end of all things."%(timesince.timeuntil(datetime.datetime(6666, 6, 6, 0, 0)))
+def timetillxpisdead(inp, input=None):
+    return "There is %s left till XP is dead."%(timesince.timeuntil()))

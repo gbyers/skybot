@@ -171,9 +171,7 @@ def _kick(inp, input=None, conn=None):
     #print input.params
     #print inp
     if inp[1] in ["cups","cup"]:
-        #time.sleep(0.75)
         conn.cmd("KICK %s %s :Don't kick any cups"%(input.chan,input.nick))
-        print "Kicked %s"%input.nick
 
 @hook.command("k",autohelp=False)
 @hook.command(autohelp=False)

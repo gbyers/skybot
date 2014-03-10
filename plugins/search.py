@@ -110,11 +110,11 @@ def expand(inp, say=None):
 
 #@hook.command("0click")
 #@hook.command
-@hook.regex("^>\$(.*)")
+@hook.regex("(.*)>\$(.*)")
 def zeroclick(inp, say=None):
     "zeroclick/0click <search> -- gets zero-click info from DuckDuckGo"
     url = "http://duckduckgo.com/lite?"
-    params = {"q":inp.group(1).encode('utf8', 'ignore')}
+    params = {"q":inp.group(2).encode('utf8', 'ignore')}
     url = "http://duckduckgo.com/lite/?"+urllib.urlencode(params)
     try:
         data = http.get(url)
@@ -132,7 +132,7 @@ def zeroclick(inp, say=None):
         else: urls = None
         answer = re.sub("<[^<]+?>","",answer)
         #answer = re.sub("<[^<]+?>","",HTMLParser.HTMLParser().unescape(search.group(1).decode('utf8','ignore')))
-        out =re.sub("\s+"," ",answer.strip())
+        out = re.sub("\s+"," ",answer.strip())
         if out: return out.decode("utf8","ignore")
         else: return ("No results")
     else:
@@ -226,3 +226,23 @@ def suggest(inp, input=None, conn=None, say=None):
                     break
     else:
         return "No suggestions for %s"%inp
+
+@hook.command
+def whois(inp, input=None, conn=None, say=None):
+    "whois <domain> -- get whois information for the domain."
+    url = inp
+    url = re.sub("https?:\/\/","",url)
+    if "/" in url: url = url.split("/")[0]
+    page = http.get("http://hostcabi.net/domain/%s"%url)
+    if page:
+        data = re.findall("<b>(IP Owner|Server Location|Description|Domain IP|Website Load Speed|Alexa Rank|Website Value|Website Daily Visitors|Website Daily Income):<\/b>(.*?)<td>(.*?)<\/td>",page)
+        if data:
+            out = []
+            for item in data:
+                stuff = re.sub("<[^<]+?>","",HTMLParser.HTMLParser().unescape(item[2])).rstrip()
+                out.append(item[0]+": \002"+stuff+"\002")
+            say("; ".join(out))
+        else:
+            return "Unable to lookup %s"%url
+    else:
+        return "Unable to lookup %s"%url

@@ -2,11 +2,10 @@ import re
 
 from util import hook
 
-
 @hook.command(autohelp=False)
 def help(inp, bot=None, notice=None):
     "help [command] -- gives a list of commands/help for a command"
-
+    """
     funcs = {}
     disabled = bot.config.get('disabled_plugins', [])
     disabled_comm = bot.config.get('disabled_commands', [])
@@ -22,9 +21,11 @@ def help(inp, bot=None, notice=None):
                         funcs[func] = command
 
     commands = dict((value, key) for key, value in funcs.iteritems())
-
+    """
     if not inp:
-        notice('available commands: ' + ' '.join(sorted(commands)).replace(" ",", "))
+        #notice('available commands: ' + ' '.join(sorted(commands)).replace(" ",", "))
+        return "A list of my commands can be found at http://nathan.pond.sx:5498/bot"
+    elif inp in commands:
+        notice(commands[inp].__doc__)
     else:
-        if inp in commands:
-            notice(commands[inp].__doc__)
+        notice("No help for %s found"%inp)
