@@ -114,7 +114,7 @@ def expand(inp, say=None):
 def zeroclick(inp, say=None):
     "zeroclick/0click <search> -- gets zero-click info from DuckDuckGo"
     url = "http://duckduckgo.com/lite?"
-    params = {"q":inp.group(1).encode('utf8', 'ignore')}
+    params = {"q":inp.group(2).encode('utf8', 'ignore')}
     url = "http://duckduckgo.com/lite/?"+urllib.urlencode(params)
     try:
         data = http.get(url)
