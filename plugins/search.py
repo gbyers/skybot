@@ -121,12 +121,12 @@ def zeroclick(inp, say=None):
     except http.HTTPError, e:
         say(str(e)+": "+url)
         return
-    search = re.search("""<td>.\t\s+(.*?).</td>""",data,re.M|re.DOTALL)
+    search = re.findall("""\t<td>.\t\s+(.*?).<\/td>""",data,re.M|re.DOTALL)
     if search:
-        answer = HTMLParser.HTMLParser().unescape(search.group(1).replace("<br>"," "))
+        answer = HTMLParser.HTMLParser().unescape(search[-1].replace("<br>"," "))
         answer = re.sub("<[^<]+?>","",answer)
         out = re.sub("\s+"," ",answer.strip())
-        if out: return out.decode("utf8","ignore")
+        if out: return out.decode("utf8","ignore").split(" More at")[0]
         else: return ("No results")
     else:
         return ("No results found.")
