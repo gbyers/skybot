@@ -23,6 +23,8 @@ ua_opera = 'Opera/9.80 (X11; Linux i686; Edition Linux Mint) Presto/2.12.388 Ver
 
 ua_opera = "skynet/3.8 https://github.com/nathan0/skybot"
 
+ua_opera = "Opera/9.80 (X11; Linux x86_64) Presto/2.12.388 Version/12.16"
+
 ua_firefox = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.6) ' \
     'Gecko/20070725 Firefox/2.0.0.6'
 ua_internetexplorer = 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'

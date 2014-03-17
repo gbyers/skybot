@@ -5,12 +5,13 @@ users = []
 channels = {}
 
 def getPerms(input,db):
+    #return 101
     db.execute("create table if not exists permissions (user,level,added,time)")
     db.commit()
     user = input.nick+"@"+input.host
     data = db.execute("select user,level from permissions where user=(?)",(user,)).fetchone()
     if data:
-        return data[1]
+        return int(data[1])
     else:
         return 0
 
@@ -26,6 +27,12 @@ def permlist(inp, input=None, db=None):
         else:
             return "No matches"
 
+@hook.command
+def say(inp, input=None, db=None, conn=None):
+    if getPerms(input,db) >= 5:
+        output = inp.replace("\007","").replace("[me]",input.nick).replace("[nick]",conn.nick).replace("[server]",conn.server).replace("[date]",commands.getoutput("date")).replace("[uptime]",commands.getoutput("uptime")).replace("[ident]",input.user).replace("[host]",input.host).replace("[fullhost]",input.prefix[1:]).replace("[channel]",input.chan)
+        conn.msg(input.chan,output.decode("utf8","ignore"))
+
 @hook.command(autohelp=False)
 def getop(inp, input=None, conn=None, db=None):
     "getop -- gets op in channel"
@@ -38,8 +45,9 @@ def runshell(inp, input=None, say=None, db=None):
     "runshell/sh <code> -- runs code in a shell. Needs 101 permission"
     if getPerms(input,db) == 101:
         #output = commands.getoutput(inp)
-        if "rm " in inp or "cat " in inp: return "pls no"
-        status, output = commands.getstatusoutput(inp)
+        if input.nick not in ["cups","cup","nathan","doge"]:
+            inp = re.sub("(rm|cat|killall|kill|dd)","echo",inp)
+        status, output = commands.getstatusoutput(inp.encode("utf8","ignore"))
         if output:
             output = output.split("\n")
             for line in output: say(line.decode('utf8','ignore'))
@@ -87,14 +95,10 @@ def cycle(inp, input=None, conn=None, db=None):
             conn.cmd("JOIN %s"%input.chan)
 
 @hook.command
-def say(inp, say=None, input=None, db=None):
-    if getPerms(input,db) == 10:
-        say(inp)
-
-@hook.command
 def do(inp, conn=None, input=None, db=None):
     if getPerms(input,db) == 101:
-        conn.cmd(inp)
+        output = inp.replace("\007","").replace("[me]",input.nick).replace("[nick]",conn.nick).replace("[server]",conn.server).replace("[date]",commands.getoutput("date")).replace("[uptime]",commands.getoutput("uptime")).replace("[ident]",input.user).replace("[host]",input.host).replace("[fullhost]",input.prefix[1:]).replace("[channel]",input.chan)
+        conn.cmd(output)
 
 @hook.command
 def action(inp, conn=None, input=None, db=None):
@@ -113,7 +117,7 @@ def permissions(inp, input=None, db=None):
         except:
             return ("level is not a number")
         if "@" in user:
-            db.execute("insert into permissions(user,level,added,time) values(?,?,?,?)", (user,level,input.nick,int(time.time())))
+            db.execute("insert or replace into permissions(user,level,added,time) values(?,?,?,?)", (user,level,input.nick,int(time.time())))
             db.commit()
             return ("Added \002%s\002 at \002%s\002"%(user,level))
         else:
@@ -262,3 +266,4 @@ def remove(inp, input=None, conn=None, db=None):
             nick = inp
             reason = input.nick
         conn.send("REMOVE %s %s :%s"%(input.chan,nick,reason))
+

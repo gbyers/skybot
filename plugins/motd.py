@@ -12,7 +12,7 @@ def motd(inp, conn=None, input=None):
             paste = h.unescape(p["raw"])
             title = p["title"]
             if "motd" in title.lower():
-                f = open("/home/nathan/.irc/etc/ircd.motd","w")
+                f = open("/home/nathan/.irc-ssl/etc/ircd.motd","w")
                 f.write(paste.encode("utf8","ignore"))
                 f.close()
                 #commands.getoutput("echo %s > /home/nathan/.irc/etc/ircd.motd"%paste)

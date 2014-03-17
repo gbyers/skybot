@@ -77,7 +77,8 @@ def translate(inp, say=None):
     except http.HTTPError, e:
         return (str(e))
     words = []
-    if "dict" in data and "sentences" in data:
+    #return data
+    if "sentences" in data:
         return data["sentences"][0]["trans"]
     elif "dict" not in data and "sentences" in data:
         return m
@@ -114,7 +115,7 @@ def expand(inp, say=None):
 def zeroclick(inp, say=None):
     "zeroclick/0click <search> -- gets zero-click info from DuckDuckGo"
     url = "http://duckduckgo.com/lite?"
-    params = {"q":inp.group(2).encode('utf8', 'ignore')}
+    params = {"q":inp.group(2).replace("\001","").encode('utf8', 'ignore')}
     url = "http://duckduckgo.com/lite/?"+urllib.urlencode(params)
     try:
         data = http.get(url)
@@ -126,7 +127,7 @@ def zeroclick(inp, say=None):
         answer = HTMLParser.HTMLParser().unescape(search[-1].replace("<br>"," ").replace("<code>","\002").replace("</code>","\002"))
         answer = re.sub("<[^<]+?>","",answer)
         out = re.sub("\s+"," ",answer.strip())
-        if out: return out.decode("utf8","ignore").split(" More at")[0]
+        if out: return out.encode("utf8","ignore").decode("utf8","ignore").split(" More at")[0]
         else: return ("No results")
     else:
         return ("No results found.")
@@ -153,11 +154,11 @@ def googleplay(inp, say=None):
     "googleplay/gp <search> -- search Google Play"
     _search(inp+" site:play.google.com", say)
 
-@hook.command("yt")
-@hook.command
-def youtube(inp, say=None):
-    "youtube/yt <search> -- search YouTube"
-    _search(inp+" site:youtube.com", say)
+#@hook.command("yt")
+#@hook.command
+#def youtube(inp, say=None):
+#    "youtube/yt <search> -- search YouTube"
+#    _search(inp+" site:youtube.com", say)
 
 @hook.command("wiki")
 @hook.command
@@ -194,11 +195,12 @@ def img(inp, say=None):
     except http.HTTPError, e:
         say(str(e)+": "+url)
         return
-    search = re.search('href="http://www.google.com/imgres(.*?)imgurl=(.*?)&(.*?)"',data)
+    search = re.search('<a href="http://www.google.com/imgres?(.*?)imgurl=(.*?)&(.*?)"',data)
     if search:
-        say(search.group(2))
+        return (search.group(2).encode("utf8","ignore"))
     else:
-        print "No results found."
+        say("No results found.")
+    print data
 
 @hook.command
 def suggest(inp, input=None, conn=None, say=None):
@@ -213,7 +215,7 @@ def suggest(inp, input=None, conn=None, say=None):
                 sug = HTMLParser.HTMLParser().unescape(sug).replace(inp,"\002%s\002"%inp)
                 if n <= 5:
                     say("%s. %s"%(n,sug))
-                    time.sleep(0.75)
+                    #time.sleep(0.75)
                     n=n+1
                 else:
                     break
@@ -239,3 +241,21 @@ def whois(inp, input=None, conn=None, say=None):
             return "Unable to lookup %s"%url
     else:
         return "Unable to lookup %s"%url
+
+@hook.command
+def torrent(inp, input=None, conn=None, say=None):
+    "torrent <search> -- search TPB for torrents"
+    s = inp.replace(" ","%20")
+    page = http.get("http://thepiratebay.se/search/%s"%s)
+    if page:
+        data = re.search("""<a href="/torrent/(\d+)/(.*?)" class="detLink" title="(.*?)">(.*?)<\/a>""",page)
+        if data:
+            d = re.search("""<font class="detDesc">(.*?), ULed by""",page)
+            sl = re.findall("""\t\t<td align="right">(\d+)<\/td>\n\t\t<td align="right">(\d+)<\/td>""",page)
+            out = "%s (%s, \00309S\003: %s, \00304L\003: %s) - \002http://thepiratebay.se/torrent/%s\002"%(data.group(3),HTMLParser.HTMLParser().unescape(d.group(1)),sl[0][0],sl[0][1],data.group(1))
+            say(out)   
+        else:
+            say("No torrents found")
+    else:
+        say("Unable to load page")
+
