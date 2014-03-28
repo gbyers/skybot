@@ -3,15 +3,6 @@ import re, urllib, HTMLParser, time
 
 from util import hook, http
 
-@hook.event('PRIVMSG')
-def pandora(paraml, input=None, say=None):
-    if paraml[0] == "#botter-test" and "doge" in paraml[1].split(" ")[0]:
-        x = http.get("http://pandorabots.com/pandora/talk-xml?"+urllib.urlencode({'botid':'f5d922d97e345aa1','skin':'custom_input','custid':"bot",'input':paraml[1].split(" ",1)[1]}))
-        match = re.search("<that>(.*?)<\/that>", x, re.M|re.I)
-        if match:
-            #time.sleep(3)
-            return HTMLParser.HTMLParser().unescape(match.group(1))
-
 relaychans = {"from":[],"to":None}
 ignoreNicks = []
 

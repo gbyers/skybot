@@ -127,7 +127,7 @@ def zeroclick(inp, say=None):
         answer = HTMLParser.HTMLParser().unescape(search[-1].replace("<br>"," ").replace("<code>","\002").replace("</code>","\002"))
         answer = re.sub("<[^<]+?>","",answer)
         out = re.sub("\s+"," ",answer.strip())
-        if out: return out.encode("utf8","ignore").decode("utf8","ignore").split(" More at")[0]
+        if out: return out.decode("utf8","ignore").split(" More at")[0]
         else: return ("No results")
     else:
         return ("No results found.")

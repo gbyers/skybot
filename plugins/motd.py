@@ -1,6 +1,6 @@
 # -- coding: utf8 --
 from util import hook, http
-import HTMLParser
+import HTMLParser, re
 
 @hook.command
 def motd(inp, conn=None, input=None):
@@ -26,19 +26,10 @@ def motd(inp, conn=None, input=None):
 @hook.command
 def cloak(inp, conn=None, input=None):
     if inp.count(" ") == 0:
-        cloak = inp.lower()
+        cloak = inp.lower().replace(".net",".not").replace(".com",".c0m").replace(".org",".0rg").replace(".overdrive.pw","user").replace("service","user").replace("overdrive-irc/","user/")
+        cloak = re.sub("(staff\/|services?|overdrive\.pw|overdrive-irc\/)","",inp.lower())
         user = input.nick
-        #conn.cmd("PRIVMSG #services :\002%s\002 change cloak to \002%s\002"%(user,cloak))
-        if cloak == "masked":
-            conn.cmd("PRIVMSG NickServ :vhost %s on pond/%s"%(user,user))
-            return "Done"
-        elif cloak == "user":
-            conn.cmd("PRIVMSG NickServ :vhost %s on %s.pond.sx"%(user,user))
-            return "Done"
-        else:
-            if cloak == "": return "Usage: cloak masked/user/<custom>"
-            else:
-                conn.cmd("PRIVMSG NickServ :vhost %s on %s"%(user,cloak))
-                return "Done"
+        #return cloak
+        conn.cmd("PRIVMSG HostServ :vhost %s %s"%(user,cloak))
     else:
-        return "Usage: cloak masked/user/<custom>"
+        return "Usage: cloak <cloak>"

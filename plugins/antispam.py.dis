@@ -1,42 +1,10 @@
 from util import hook
 import time, re
 
-privmsg = {}
-badwords = ["fuck"]
-
-@hook.command
-def addbadword(inp, input=None):
-    if input.nick in ["nathan","cups"]:
-        if inp.lower() not in badwords:
-            time.sleep(1)
-            badwords.append(inp.lower())
-            return "Done"
-        else:
-            return "%s already in badwords"%inp.lower()
-
-@hook.command
-def delbadword(inp, input=None):
-    if input.nick in ["nathan","cups"]:
-        badwords.remove(inp)
-        return "Done"
-
-@hook.command
-def badwordlist(inp, input=None):
-    if input.nick in ["nathan","cups"]:
-        return ", ".join(badwords)
-
-@hook.event('PRIVMSG')
+#@hook.event('PRIVMSG')
 def _privmsg(inp, input=None, conn=None):
     chan = input.chan.lower()
     nick = input.nick.lower()
-    bad = "("
-    bad+= "|".join(badwords)
-    bad+= ")"
-    #for word in inp:
-    m = re.search(bad,inp[1],re.I)
-    if m: conn.cmd("KICK %s %s :Badword detected."%(input.chan,input.nick))
-    #if word.lower() in badwords:
-    #    conn.cmd("KICK %s %s :Badword detected."%(input.chan,input.nick))
     if not privmsg.has_key(chan):
         privmsg[chan] = {}
     if not privmsg[chan].has_key(nick):
@@ -50,7 +18,7 @@ def _privmsg(inp, input=None, conn=None):
         privmsg[chan][nick]["last"] = time.time()
         #if c >= 3 and privmsg[chan][nick]["kicked"] <= 2 and privmsg[chan][nick]["iskicked"] == 0:
         if c >= 3:
-            conn.cmd("KICK %s %s :Don't spam here"%(chan,nick))
+            conn.cmd("KICK %s %s :Don't spam"%(chan,nick))
             #privmsg[chan][nick]["kicked"] = privmsg[chan][nick]["kicked"]+1
             #privmsg[chan][nick]["iskicked"] = 1
         #elif c >= 2 and privmsg[chan][nick]["kicked"] >= 3 and privmsg[chan][nick]["iskicked"] == 0:

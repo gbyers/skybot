@@ -9,7 +9,7 @@ def addbadword(inp, input=None):
     if input.nick in ["nathan","cups"]:
         if inp.lower() not in badwords:
             time.sleep(1)
-            badwords.append(inp.lower())
+            badwords.append(inp)
             return "Done"
         else:
             return "%s already in badwords"%inp.lower()
@@ -33,4 +33,4 @@ def _privmsg(inp, input=None, conn=None):
     bad+= "|".join(badwords)
     bad+= ")"
     m = re.search(bad,inp[1],re.I)
-    if m: conn.cmd("KICK %s %s :Badword detected."%(input.chan,input.nick))
+    if m: conn.cmd("KICK %s %s :Badword detected"%(input.chan,input.nick))

@@ -5,6 +5,7 @@ import time
 import os
 import commands
 import datetime
+import math
 
 from util import hook, http, timesince
 
@@ -111,3 +112,33 @@ def howlongtillxpisdead(inp):
 @hook.command
 def timetotheendofallthings(inp):
     return "There is %s left till the end of all things."%(timesince.timeuntil(datetime.datetime(6666, 6, 6, 0, 0)))
+
+@hook.command
+def metrictime(inp):
+    if inp.count(":") == 2:
+        hours,minutes,seconds = inp.split(":")
+        try:
+            hours = int(hours)
+            minutes = int(minutes)
+            seconds = int(seconds)
+        except:
+            return "That's not a time"
+        if hours < 0 or hours >= 24: return "Hours must be between 0 and 23"
+        if minutes < 0 or minutes >= 60: return "Minutes must be between 0 and 59"
+        if seconds < 0 or seconds >= 60: return "Seconds must be between 0 and 59"
+        daysecs = 3600*hours + 60*minutes + seconds
+        metricsecs = daysecs * 100000 / 86400
+        metrichours = math.floor(metricsecs / 10000)
+        metricsecs = metricsecs - 10000 * metrichours
+        metricminutes = math.floor(metricsecs / 100)
+        metricsecs = math.floor(metricsecs - 100 * metricminutes)
+        if metrichours <= 0: metrichours = "0"+str(metrichours)
+        if metricminutes <= 9: metricminutes = "0"+str(metricminutes)
+        if metricsecs <= 9: metricsecs = "0"+str(metricsecs)
+        metrichours = str(metrichours).split(".")[0]
+        metricminutes = str(metricminutes).split(".")[0]
+        metricsecs = str(metricsecs).split(".")[0]
+        metric = metrichours+":"+metricminutes+":"+metricsecs
+        return "%s in metric: %s"%(inp,metric)
+    else:
+        return "Usage: metrictime <hours(0-23)>:<minutes(0-59)>:<seconds(0-59)>"

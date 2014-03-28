@@ -5,7 +5,7 @@ import httplib, re
 
 @hook.event("PRIVMSG")
 def do_rand(inp, input=None, conn=None):
-    if input.chan.lower() in ["##free","#test"]:
+    if input.chan.lower() in ["##free"]:
         words = inp[1]
         if "butt" in words:
             data = getJson(False,"r/ass")

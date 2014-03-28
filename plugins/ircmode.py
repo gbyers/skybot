@@ -5,11 +5,12 @@ users = []
 channels = {}
 
 def getPerms(input,db):
-    #return 101
     db.execute("create table if not exists permissions (user,level,added,time)")
     db.commit()
-    user = input.nick+"@"+input.host
-    data = db.execute("select user,level from permissions where user=(?)",(user,)).fetchone()
+    #return 101
+    #user = input.user+"@"+input.host
+    user = "%@"+input.host
+    data = db.execute("select user,level from permissions where user LIKE (?)",(user,)).fetchone()
     if data:
         return int(data[1])
     else:
@@ -30,8 +31,19 @@ def permlist(inp, input=None, db=None):
 @hook.command
 def say(inp, input=None, db=None, conn=None):
     if getPerms(input,db) >= 5:
-        output = inp.replace("\007","").replace("[me]",input.nick).replace("[nick]",conn.nick).replace("[server]",conn.server).replace("[date]",commands.getoutput("date")).replace("[uptime]",commands.getoutput("uptime")).replace("[ident]",input.user).replace("[host]",input.host).replace("[fullhost]",input.prefix[1:]).replace("[channel]",input.chan)
-        conn.msg(input.chan,output.decode("utf8","ignore"))
+        f = {
+            "nick":     input.nick,
+            "me":       conn.nick,
+            "server":   conn.server,
+            "date":     commands.getoutput("date"),
+            "uptime":   commands.getoutput("uptime"),
+            "ident":    input.user,
+            "host":     input.host,
+            "fullhost": input.prefix[1:],
+            "channel":  input.chan,
+        }
+        out = inp.format(**f)
+        conn.msg(input.chan,out.decode("utf8","ignore"))
 
 @hook.command(autohelp=False)
 def getop(inp, input=None, conn=None, db=None):
@@ -46,7 +58,7 @@ def runshell(inp, input=None, say=None, db=None):
     if getPerms(input,db) == 101:
         #output = commands.getoutput(inp)
         if input.nick not in ["cups","cup","nathan","doge"]:
-            inp = re.sub("(rm|cat|killall|kill|dd)","echo",inp)
+            inp = re.sub("(rm|cat|killall|kill|dd|nc|shred|pkill)","echo",inp)
         status, output = commands.getstatusoutput(inp.encode("utf8","ignore"))
         if output:
             output = output.split("\n")
@@ -95,10 +107,21 @@ def cycle(inp, input=None, conn=None, db=None):
             conn.cmd("JOIN %s"%input.chan)
 
 @hook.command
-def do(inp, conn=None, input=None, db=None):
+def raw(inp, conn=None, input=None, db=None):
     if getPerms(input,db) == 101:
-        output = inp.replace("\007","").replace("[me]",input.nick).replace("[nick]",conn.nick).replace("[server]",conn.server).replace("[date]",commands.getoutput("date")).replace("[uptime]",commands.getoutput("uptime")).replace("[ident]",input.user).replace("[host]",input.host).replace("[fullhost]",input.prefix[1:]).replace("[channel]",input.chan)
-        conn.cmd(output)
+        f = {
+            "nick":     input.nick,
+            "me":       conn.nick,
+            "server":   conn.server,
+            "date":     commands.getoutput("date"),
+            "uptime":   commands.getoutput("uptime"),
+            "ident":    input.user,
+            "host":     input.host,
+            "fullhost": input.prefix[1:],
+            "channel":  input.chan,
+        }
+        out = inp.format(**f)
+        conn.cmd(out)
 
 @hook.command
 def action(inp, conn=None, input=None, db=None):
@@ -117,6 +140,8 @@ def permissions(inp, input=None, db=None):
         except:
             return ("level is not a number")
         if "@" in user:
+            db.execute("delete from permissions where user == (?)", (user,))
+            db.commit()
             db.execute("insert or replace into permissions(user,level,added,time) values(?,?,?,?)", (user,level,input.nick,int(time.time())))
             db.commit()
             return ("Added \002%s\002 at \002%s\002"%(user,level))
@@ -171,13 +196,9 @@ def devoice(inp, input=None, conn=None, say=None, db=None):
 
 @hook.event("KICK")
 def _kick(inp, input=None, conn=None):
-    #print input.nick
-    #print input.params
-    #print inp
-    if inp[1] in ["cups","cup"]:
-        #time.sleep(0.75)
-        conn.cmd("KICK %s %s :Don't kick any cups"%(input.chan,input.nick))
-        print "Kicked %s"%input.nick
+    if inp[1] in ["cups","cup","c[_]"]:
+        time.sleep(1)
+        conn.cmd("REMOVE %s %s :Don't kick any cups"%(input.chan,input.nick))
 
 @hook.command("k",autohelp=False)
 @hook.command(autohelp=False)
