@@ -1,6 +1,6 @@
 # -- coding: utf8 --
 from util import hook, http
-import time
+import time, re
 
 api_url = "http://ws.audioscrobbler.com/2.0/?format=json"
 
@@ -87,7 +87,9 @@ def lastfm(inp, nick='', say=None, api_key=None, db=None):
     title = track["name"]
     album = track["album"]["#text"]
     artist = track["artist"]["#text"]
-    url = track["url"].replace("www.","")
+    url = track["url"].replace("www.","").encode("utf8","ignore")
+    #url = urllib2.unquote(urllib2.quote(url.encode("utf8"))).decode("utf8")
+    url = urldecode(url).decode("utf8","ignore")
     if last:
         last = formatTime(int(time.time() - last))
 
@@ -97,3 +99,10 @@ def lastfm(inp, nick='', say=None, api_key=None, db=None):
         output = u"\x02%s\x0F np: \x02%s\x0F - \x02%s\x0F ⌛ \x02%s\x0F - %s" % (user,artist,title,last,url)
 
     say(output)
+
+def htc(m):
+    return chr(int(m.group(1),16))
+
+def urldecode(url):
+    rex=re.compile('%([0-9a-hA-H][0-9a-hA-H])',re.M)
+    return rex.sub(htc,url)

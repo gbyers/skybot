@@ -58,12 +58,28 @@ def runshell(inp, input=None, say=None, db=None):
     if getPerms(input,db) == 101:
         #output = commands.getoutput(inp)
         if input.nick not in ["cups","cup","nathan","doge"]:
-            inp = re.sub("(rm|cat|killall|kill|dd|nc|shred|pkill)","echo",inp)
+            inp = re.sub("(ls|toilet|figlet|rm|cat|killall|kill|dd|nc|shred|pkill)\s","echo",inp)
         status, output = commands.getstatusoutput(inp.encode("utf8","ignore"))
         if output:
+            #return output
             output = output.split("\n")
             for line in output: say(line.decode('utf8','ignore'))
         else: return status
+
+@hook.command("py")
+def python(inp, input=None, say=None, db=None):
+    "python/py <code> -- run python code"
+    if getPerms(input,db) == 101:
+        status, output = commands.getstatusoutput("python -c \""+inp.encode("utf8","ignore")+"\"")
+        if output:
+            #return output
+            output = output.split("\n")
+            for line in output: say(line.decode('utf8','ignore'))
+        else: return status
+
+@hook.command(autohelp=False)
+def drink(inp, conn=None, say=None, input=None):
+    say("\001ACTION throws water at %s\001"%input.nick)
 
 @hook.event('352')
 def event_352(inp, conn=None, say=None, db=None):
@@ -216,16 +232,16 @@ def kick(inp, conn=None, input=None, db=None):
 def quiet(inp, input=None, conn=None, db=None):
     "quiet <nick> -- quiets nick in current channel"
     if getPerms(input,db) >= 50:
-        conn.cmd("MODE %s +b ~q:%s"%(input.chan,inp))
+        conn.cmd("MODE %s +q %s"%(input.chan,inp))
 
 @hook.command
 def unquiet(inp, input=None, conn=None, db=None):
     "unquiet <nick> -- unquiets [nick] in current channel"
     if getPerms(input,db) >= 50:
-        conn.cmd("MODE %s -b ~q:%s"%(input.chan,inp))
+        conn.cmd("MODE %s -q %s"%(input.chan,inp))
 
 autoOpNicks = ["chintu","nathan","ducky","google","nathan_"]
-autoOpChans = ["#"]
+autoOpChans = ["#","&fuxi"]
 @hook.event('JOIN')
 def doJoin(inp, input=None, conn=None):
     if input.nick == conn.nick:

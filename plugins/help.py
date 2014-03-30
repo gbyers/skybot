@@ -21,8 +21,8 @@ def help(inp, bot=None, notice=None):
 
     commands = dict((value, key) for key, value in funcs.iteritems())
     if not inp:
-        #notice('available commands: ' + ' '.join(sorted(commands)).replace(" ",", "))
-        return "A list of my commands can be found at http://nathan.pond.sx:5498/bot"
+        return ('available commands: ' + ' '.join(sorted(commands)).replace(" ",", "))
+        #return "A list of my commands can be found at http://nathan.pond.sx:5498/bot"
     elif inp in commands:
         if inp == "help": return "No help for you!"
         notice(commands[inp].__doc__)
