@@ -229,23 +229,75 @@ def kick(inp, conn=None, input=None, db=None):
             conn.cmd("KICK %s %s :%s"%(input.chan,inp.split(" ")[0],reason))
 
 @hook.command
-def quiet(inp, input=None, conn=None, db=None):
-    "quiet <nick> -- quiets nick in current channel"
-    if getPerms(input,db) >= 50:
-        conn.cmd("MODE %s +q %s"%(input.chan,inp))
+def mute(inp, conn=None, input=None, db=None):
+    "mute <user> -- quiets nick in current channel"
+    if inp.count(" ") >= 1:
+        user = inp.split(" ")[0]
+    else:
+        user = inp
+    if user.lower() in users and getPerms(input,db) >= 50:
+        if channels[input.chan.lower()].has_key(user.lower()):
+            mask = "*!"+channels[input.chan.lower()][user.lower()]["ident"]+"@"+channels[input.chan.lower()][user.lower()]["host"]
+            conn.send("MODE %s +b ~q:%s"%(input.chan,mask))
+        else:
+            conn.send("MODE %s +b ~q:%s"%(input.chan,user))
+    elif getPerms(input,db) >= 50:
+        conn.send("MODE %s +b ~q:%s"%(input.chan,user))
 
 @hook.command
-def unquiet(inp, input=None, conn=None, db=None):
-    "unquiet <nick> -- unquiets [nick] in current channel"
-    if getPerms(input,db) >= 50:
-        conn.cmd("MODE %s -q %s"%(input.chan,inp))
+def unmute(inp, conn=None, input=None, db=None):
+    "unmute <user> -- unquiets nick in current channel"
+    if inp.count(" ") >= 1:
+        user = inp.split(" ")[0]
+    else:
+        user = inp
+    if user.lower() in users and getPerms(input,db) >= 50:
+        if channels[input.chan.lower()].has_key(user.lower()):
+            mask = "*!"+channels[input.chan.lower()][user.lower()]["ident"]+"@"+channels[input.chan.lower()][user.lower()]["host"]
+            conn.send("MODE %s -b ~q:%s"%(input.chan,mask))
+        else:
+            conn.send("MODE %s -b ~q:%s"%(input.chan,user))
+    elif getPerms(input,db) >= 50:
+        conn.send("MODE %s -b ~q:%s"%(input.chan,user))
+
+@hook.command
+def quiet(inp, conn=None, input=None, db=None):
+    "mute <user> -- quiets nick in current channel"
+    if inp.count(" ") >= 1:
+        user = inp.split(" ")[0]
+    else:
+        user = inp
+    if user.lower() in users and getPerms(input,db) >= 50:
+        if channels[input.chan.lower()].has_key(user.lower()):
+            mask = "*!"+channels[input.chan.lower()][user.lower()]["ident"]+"@"+channels[input.chan.lower()][user.lower()]["host"]
+            conn.send("MODE %s +q %s"%(input.chan,mask))
+        else:
+            conn.send("MODE %s +q %s"%(input.chan,user))
+    elif getPerms(input,db) >= 50:
+        conn.send("MODE %s +q %s"%(input.chan,user))
+
+@hook.command
+def unquiet(inp, conn=None, input=None, db=None):
+    "mute <user> -- unquiets nick in current channel"
+    if inp.count(" ") >= 1:
+        user = inp.split(" ")[0]
+    else:
+        user = inp
+    if user.lower() in users and getPerms(input,db) >= 50:
+        if channels[input.chan.lower()].has_key(user.lower()):
+            mask = "*!"+channels[input.chan.lower()][user.lower()]["ident"]+"@"+channels[input.chan.lower()][user.lower()]["host"]
+            conn.send("MODE %s -q %s"%(input.chan,mask))
+        else:
+            conn.send("MODE %s -q %s"%(input.chan,user))
+    elif getPerms(input,db) >= 50:
+        conn.send("MODE %s -q %s"%(input.chan,user))
 
 autoOpNicks = ["chintu","nathan","ducky","google","nathan_"]
 autoOpChans = ["#","&fuxi"]
 @hook.event('JOIN')
 def doJoin(inp, input=None, conn=None):
-    if input.nick == conn.nick:
-        conn.cmd("WHO %s"%input.chan)
+    #if input.nick == conn.nick:
+    conn.cmd("WHO %s"%input.chan)
     if input.nick.lower() in autoOpNicks and input.chan.lower() in autoOpChans:
         conn.cmd("MODE %s +o %s"%(input.chan,input.nick))
 
