@@ -94,9 +94,9 @@ def lastfm(inp, nick='', say=None, api_key=None, db=None):
         last = formatTime(int(time.time() - last))
 
     if status == 0:
-        output = u"\x02%s\x0F np: \x02%s\x0F - \x02%s\x0F - %s" % (user,artist,title,url)
+        output = u"\x02%s\x0F is listening to \x02%s\x0F - \x02%s\x0F - %s" % (user,artist,title,url)
     elif status == 1:
-        output = u"\x02%s\x0F np: \x02%s\x0F - \x02%s\x0F ⌛ \x02%s\x0F - %s" % (user,artist,title,last,url)
+        output = u"\x02%s\x0F was listening to: \x02%s\x0F - \x02%s\x0F ⌛ \x02%s\x0F - %s" % (user,artist,title,last,url)
 
     say(output)
 

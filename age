@@ -1,7 +1,7 @@
 <?php
 $time = strtotime('2014-03-20 15:14:11');
 
-echo "Fuxi is ".humanTiming($time)." old";
+echo "Fenshire is ".humanTiming($time)." old";
 
 function humanTiming ($time)
 {

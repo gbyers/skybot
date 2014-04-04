@@ -10,7 +10,7 @@ def db_init(db):
     db.commit()
 
 
-@hook.singlethread
+#@hook.singlethread
 @hook.event('PRIVMSG', ignorebots=False)
 def seeninput(paraml, input=None, db=None, bot=None, say=None):
     db_init(db)

@@ -112,25 +112,26 @@ def expand(inp, say=None):
 #@hook.command("0click")
 #@hook.command
 @hook.regex("(.*)>\$(.*)")
-def zeroclick(inp, say=None):
+def zeroclick(inp, say=None, input=None):
     "zeroclick/0click <search> -- gets zero-click info from DuckDuckGo"
-    url = "http://duckduckgo.com/lite?"
-    params = {"q":inp.group(2).replace("\001","").encode('utf8', 'ignore')}
-    url = "http://duckduckgo.com/lite/?"+urllib.urlencode(params)
-    try:
-        data = http.get(url)
-    except http.HTTPError, e:
-        say(str(e)+": "+url)
-        return
-    search = re.findall("""\t<td>.\t\s+(.*?).<\/td>""",data,re.M|re.DOTALL)
-    if search:
-        answer = HTMLParser.HTMLParser().unescape(search[-1].replace("<br>"," ").replace("<code>","\002").replace("</code>","\002"))
-        answer = re.sub("<[^<]+?>","",answer)
-        out = re.sub("\s+"," ",answer.strip())
-        if out: return out.decode("utf8","ignore").split(" More at")[0]
-        else: return ("No results")
-    else:
-        return ("No results found.")
+    if input.nick.lower() not in ["ovd|relay","nebulae"]:
+        url = "http://duckduckgo.com/lite?"
+        params = {"q":inp.group(2).replace("\001","").encode('utf8', 'ignore')}
+        url = "http://duckduckgo.com/lite/?"+urllib.urlencode(params)
+        try:
+            data = http.get(url)
+        except http.HTTPError, e:
+            say(str(e)+": "+url)
+            return
+        search = re.findall("""\t<td>.\t\s+(.*?).<\/td>""",data,re.M|re.DOTALL)
+        if search:
+            answer = HTMLParser.HTMLParser().unescape(search[-1].replace("<br>"," ").replace("<code>","\002").replace("</code>","\002"))
+            answer = re.sub("<[^<]+?>","",answer)
+            out = re.sub("\s+"," ",answer.strip())
+            if out: return out.decode("utf8","ignore").split(" More at")[0]
+            else: return ("No results")
+        else:
+            return ("No results found.")
 
 @hook.command
 def ddg(inp, say=None):

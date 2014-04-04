@@ -1,5 +1,6 @@
+# -- coding: utf8 --
 from util import hook, timesince
-import time, commands, re
+import time, commands, re, random, base64
 
 users = []
 channels = {}
@@ -42,7 +43,7 @@ def say(inp, input=None, db=None, conn=None):
             "fullhost": input.prefix[1:],
             "channel":  input.chan,
         }
-        out = inp.format(**f)
+        out = inp.encode("utf8","ignore").format(**f)
         conn.msg(input.chan,out.decode("utf8","ignore"))
 
 @hook.command(autohelp=False)
@@ -52,40 +53,42 @@ def getop(inp, input=None, conn=None, db=None):
         conn.cmd("MODE %s +o %s"%(input.chan,conn.nick))
         conn.cmd("PRIVMSG ChanServ :OP %s"%input.chan)
 
+@hook.singlethread
 @hook.command("sh")
-def runshell(inp, input=None, say=None, db=None):
+def runshell(inp, input=None, say=None, db=None, notice=None):
     "runshell/sh <code> -- runs code in a shell. Needs 101 permission"
     if getPerms(input,db) == 101:
         #output = commands.getoutput(inp)
         if input.nick not in ["cups","cup","nathan","doge"]:
-            inp = re.sub("(ls|toilet|figlet|rm|cat|killall|kill|dd|nc|shred|pkill)\s","echo",inp)
+            inp = re.sub("(rm|killall|kill|dd|nc|shred|pkill|cat config)\s?","echo Unable to run",inp)
         status, output = commands.getstatusoutput(inp.encode("utf8","ignore"))
         if output:
-            #return output
             output = output.split("\n")
-            for line in output: say(line.decode('utf8','ignore'))
-        else: return status
-
-@hook.command("py")
-def python(inp, input=None, say=None, db=None):
-    "python/py <code> -- run python code"
-    if getPerms(input,db) == 101:
-        status, output = commands.getstatusoutput("python -c \""+inp.encode("utf8","ignore")+"\"")
-        if output:
-            #return output
-            output = output.split("\n")
-            for line in output: say(line.decode('utf8','ignore'))
+            if len(output) <= 4:
+                for line in output:
+                     say(line.decode('utf8','ignore'))
+            else:
+                fname = "/srv/http/nathan.uk.to/sh/"+str(base64.b64encode(str(int(time.time()))).strip("="))+".txt"
+                f = open(fname,"w")
+                f.write("Output of %s\n------------------------------------------\n\n"%inp.encode("utf8","ignore"))
+                for line in output:
+                    f.write(line.decode('utf8','ignore')+"\n")
+                    #notice(line.decode('utf8','ignore'))
+                f.close()
+                return "http://"+fname.replace("/srv/http/","")
         else: return status
 
 @hook.command(autohelp=False)
 def drink(inp, conn=None, say=None, input=None):
-    say("\001ACTION throws water at %s\001"%input.nick)
+    if "cup" in inp or "cups" in inp:
+        say("\001ACTION give %s a cup of water\001"%input.nick)
+    else:
+        say("\001ACTION throws water at %s\001"%input.nick)
 
 @hook.event('352')
 def event_352(inp, conn=None, say=None, db=None):
     me, chan, ident, host, server, nick, status, info = inp
     jtime = int(time.time())
-    #print me,chan,ident,host,server,nick
     if nick.lower() not in users: users.append(nick.lower())
     if not channels.has_key(chan.lower()):
         channels[chan.lower()] = {}
@@ -296,7 +299,6 @@ autoOpNicks = ["chintu","nathan","ducky","google","nathan_"]
 autoOpChans = ["#","&fuxi"]
 @hook.event('JOIN')
 def doJoin(inp, input=None, conn=None):
-    #if input.nick == conn.nick:
     conn.cmd("WHO %s"%input.chan)
     if input.nick.lower() in autoOpNicks and input.chan.lower() in autoOpChans:
         conn.cmd("MODE %s +o %s"%(input.chan,input.nick))
@@ -308,20 +310,13 @@ def ban(inp, conn=None, input=None, db=None):
         user = inp.split(" ")[0]
     else:
         user = inp
-    #print "user",user
     if user.lower() in users and getPerms(input,db) >= 50:
-        #print "users"
-        #print channels[input.chan.lower()]
         if channels[input.chan.lower()].has_key(user.lower()):
-            #print "haskey"
             mask = "*!"+channels[input.chan.lower()][user.lower()]["ident"]+"@"+channels[input.chan.lower()][user.lower()]["host"]
-            #print mask
             conn.send("MODE %s +b %s"%(input.chan,mask))
         else:
-            #print "nokey"
             conn.send("MODE %s +b %s"%(input.chan,user))
     elif getPerms(input,db) >= 50:
-        #print "nope"
         conn.send("MODE %s +b %s"%(input.chan,user))
 
 @hook.command
