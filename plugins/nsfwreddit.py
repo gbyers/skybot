@@ -1,30 +1,7 @@
-
 from util import http, hook
 import urllib2, json, commands, random
 import httplib, re
 
-@hook.event("PRIVMSG")
-def do_rand(inp, input=None, conn=None):
-    if input.chan.lower() in ["##free"]:
-        words = inp[1]
-        if "butt" in words:
-            data = getJson(False,"r/ass")
-        elif "boobies" in words or "boobs" in words:
-            data = getJson(False,"r/boobies")
-        if "boobies" in words or "boobs" in words or "butt" in words:
-            if data:
-                data = data["data"]["children"]
-                if len(data) >= 1:
-                    data = data[random.randint(0,len(data))]
-                    linkurl = data["data"]["url"]
-                    linktitle = data["data"]["title"]
-                    linksub = data["data"]["subreddit"]
-                    over_18 = data["data"]["over_18"]
-                    #if over_18:
-                    conn.cmd("PRIVMSG %s :%s: %s"%(input.chan,input.nick,linkurl))
-                    #say("%s - \x02\x0304NSFW\x0f %s - r/%s"%(linktitle,linkurl,linksub))
-                    #else:
-                    #say("%s - %s - r/%s"%(linktitle,linkurl,linksub))
 
 @hook.command(autohelp=False)
 @hook.command('rr', autohelp=False)

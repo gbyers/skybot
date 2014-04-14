@@ -55,12 +55,13 @@ def getop(inp, input=None, conn=None, db=None):
 
 @hook.singlethread
 @hook.command("sh")
-def runshell(inp, input=None, say=None, db=None, notice=None):
+def runshell(inp, input=None, say=None, db=None, notice=None, conn=None):
     "runshell/sh <code> -- runs code in a shell. Needs 101 permission"
     if getPerms(input,db) == 101:
+        if "sudo" in inp: conn.cmd("PRIVMSG @& :-%s using sudo command: %s"%(input.nick,inp))
         #output = commands.getoutput(inp)
-        if input.nick not in ["cups","cup","nathan","doge"]:
-            inp = re.sub("(rm|killall|kill|dd|nc|shred|pkill|cat config)\s?","echo Unable to run",inp)
+        if input.nick not in ["Ducky","cups","cup","nathan","doge"]:
+            inp = re.sub("^(rm|killall|kill|dd|nc|shred|pkill|cat config)\s?","echo ",inp)
         status, output = commands.getstatusoutput(inp.encode("utf8","ignore"))
         if output:
             output = output.split("\n")
@@ -229,7 +230,11 @@ def kick(inp, conn=None, input=None, db=None):
                 reason = inp.split(" ",1)[1]
             else:
                 reason = ""
-            conn.cmd("KICK %s %s :%s"%(input.chan,inp.split(" ")[0],reason))
+            if "," in inp.split(" ")[0]:
+                u = inp.split(" ")[0].split(",")
+                for user in u: conn.cmd("KICK %s %s :%s"%(input.chan,user,reason))
+            else:
+                conn.cmd("KICK %s %s :%s"%(input.chan,inp.split(" ")[0],reason))
 
 @hook.command
 def mute(inp, conn=None, input=None, db=None):

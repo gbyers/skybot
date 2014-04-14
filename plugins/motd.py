@@ -23,13 +23,3 @@ def motd(inp, conn=None, input=None):
         else:
             return "Not found"
 
-@hook.command
-def cloak(inp, conn=None, input=None):
-    if inp.count(" ") == 0:
-        cloak = inp.lower().replace(".net",".not").replace(".com",".c0m").replace(".org",".0rg").replace(".overdrive.pw","user").replace("service","user").replace("overdrive-irc/","user/")
-        cloak = re.sub("(staff\/|services?|overdrive\.pw|overdrive-irc\/)","",inp.lower())
-        user = input.nick
-        #return cloak
-        conn.cmd("PRIVMSG HostServ :vhost %s %s"%(user,cloak))
-    else:
-        return "Usage: cloak <cloak>"

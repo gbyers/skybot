@@ -12,6 +12,7 @@ def add(inp, input=None, db=None):
     db.commit()
     return "Added info: %s"%inp
 
+@hook.command("asl")
 @hook.command
 def info(inp, inpt=None, db=None):
     "info <nick> -- return info for a nick"

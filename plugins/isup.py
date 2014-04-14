@@ -2,7 +2,7 @@ from util import http, hook
 
 @hook.command
 def isup(inp):
-    "isup [url] -- checks if the website is up or not"
+    "isup <url> -- checks if the website is up or not"
     data = http.get("http://isup.me/%s"%inp)
     if "If you can see this page and still think we're down, it's just you." in data:
         return ("If you can see this page and still think we're down, it's just you.")

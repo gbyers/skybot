@@ -23,12 +23,11 @@ def get_version():
 
 
 #autorejoin channels
-#@hook.event('KICK')
-#def rejoin(paraml, conn=None):
-#    if paraml[1] == conn.nick:
-#        if paraml[0].lower() in conn.channels:
-#            conn.join(paraml[0])
-
+@hook.event('KICK')
+def rejoin(paraml, conn=None):
+    if paraml[1] == conn.nick:
+    #if paraml[0].lower() in conn.channels:
+        conn.join(paraml[0])
 
 #join channels when invited
 #@hook.event('INVITE')
@@ -71,7 +70,8 @@ def ping(inp, notice=None):
     notice('\x01PING %s\x01' % reply)
 
 
-@hook.command(autohelp=None)
+@hook.command("gi",autohelp=False)
+@hook.command(autohelp=False)
 def getinfo(inp, say=None, input=None):
     "getinfo -- returns PID, Threads and Virtual Memory"
     PID = os.getpid()
@@ -107,11 +107,12 @@ def source(inp):
     
 @hook.command
 def howlongtillxpisdead(inp):
-    return "There is %s left till XP is dead."%(timesince.timeuntil(datetime.datetime(2014, 4, 8, 0, 0)))
+    #if timesince.timeuntil(datetime.datetime(2014, 4, 8, 0, 0)) == "0 minutes": return "XP is dead, WE'RE ALL GOING TO DIE!!"
+    return "Windows XP has been dead for %s"%(timesince.timesince(datetime.datetime(2014, 4, 8, 0, 0)))
 
 @hook.command
 def timetotheendofallthings(inp):
-    return "There is %s left till the end of all things."%(timesince.timeuntil(datetime.datetime(6666, 6, 6, 0, 0)))
+    return "There is %s left till the end of all things."%(timesince.timeuntil(datetime.datetime(2023, 8, 12, 0, 0)))
 
 @hook.command
 def metrictime(inp):
@@ -132,7 +133,7 @@ def metrictime(inp):
         metricsecs = metricsecs - 10000 * metrichours
         metricminutes = math.floor(metricsecs / 100)
         metricsecs = math.floor(metricsecs - 100 * metricminutes)
-        if metrichours <= 0: metrichours = "0"+str(metrichours)
+        if metrichours <= 9: metrichours = "0"+str(metrichours)
         if metricminutes <= 9: metricminutes = "0"+str(metricminutes)
         if metricsecs <= 9: metricsecs = "0"+str(metricsecs)
         metrichours = str(metrichours).split(".")[0]

@@ -7,9 +7,7 @@ relaychans = {"from":[],"to":None}
 ignoreNicks = []
 
 trusted = [
-    "unaffiliated/cups",
-    "F86D1CB7.E7072F54.A84B1A07.IP",
-    "nathan.pond.sx",
+    "gateway/web/b0rked.me/ip.127.0.0.69",
 ]
 
 @hook.command
@@ -36,27 +34,25 @@ def rignored(inp,input=None):
 
 @hook.command(autohelp=False)
 def relay(inp, input=None, say=None, conn=None):
-    "relay <channel> [channel2] [channel3].. -- starts relay sending messages to active channel"
+    "relay <channel> -- starts relay between active channel and <channel>"
     if input.host in trusted:
         if inp:
-            if inp[0] == "#":
-                fromtmp = inp.split(" ")
-                for chan in fromtmp:
-                    relaychans["from"].append(chan.lower())
+            if inp[0] == "#" or inp[0] == "&":
                 relaychans["to"] = input.chan
+                relaychans["from"] = inp
                 say("Relay started")
             elif inp == "stop":
                 relaychans["from"] = []
                 relaychans["to"] = None
                 say("Relay stopped")
         else:
-            if relaychans["from"] is not [] and relaychans["to"] is not None:
-                rchans = ", ".join(relaychans["from"])
+            if relaychans["from"] is not None and relaychans["to"] is not None:
+                rchans = "%s and %s"%(relaychans["from"],relaychans["to"])
                 return ("Relay already running between %s"%rchans)
             else:
                 return ("No relay running")
 
-formats = {'PRIVMSG': '<%(chan)s/%(nick)s> %(msg)s',
+formats = {'PRIVMSG': '<%(chan)s/-%(nick)s> %(msg)s',
     'PART': '%(nick)s [%(user)s@%(host)s] has left %(chan)s',
     'JOIN': '%(nick)s [%(user)s@%(host)s] has joined %(param0)s',
     'MODE': 'mode/%(chan)s [%(param_tail)s] by %(nick)s',
@@ -68,7 +64,7 @@ formats = {'PRIVMSG': '<%(chan)s/%(nick)s> %(msg)s',
     'NICK': '%(nick)s is now known as %(msg)s'
 }
 
-ctcp_formats = {'ACTION': '<%(chan)s/%(nick)s> * %(nick)s %(ctcpmsg)s'}
+ctcp_formats = {'ACTION': '<%(chan)s/-%(nick)s> * %(nick)s %(ctcpmsg)s'}
 
 irc_color_re = re.compile(r'(\x03(\d+,\d+|\d)|[\x0f\x02\x16\x1f])')
 
@@ -98,9 +94,11 @@ def beautify(input):
 @hook.event('*')
 def log(paraml, input=None, bot=None, conn=None):
     if relaychans.has_key("from") and relaychans.has_key("to") and input.nick.lower() not in ignoreNicks:
-        if input.chan.lower() in relaychans["from"]:
-            input.msg = u'%s'%input.msg
-            beau = beautify(input)
-            if beau == '':
-                return
+        input.msg = u'%s'%input.msg
+        beau = beautify(input)
+        if beau == '':
+            return
+        if input.chan.lower() == relaychans["from"]:
             conn.cmd(u'PRIVMSG %s :%s'%(relaychans["to"],beau))
+        elif input.chan.lower() == relaychans["to"]:
+            conn.cmd(u'PRIVMSG %s :%s'%(relaychans["from"],beau))

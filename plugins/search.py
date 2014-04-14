@@ -93,13 +93,16 @@ def translate(inp, say=None):
     
 @hook.command
 def rlysx(inp, say=None):
-    "rlysx <url> -- converts long URL to a really sexy URL"
+    "rlysx <url> -- converts long URL to a really sexy URL (doesn't work currently)"
+    """
     try:
         data = (http.get("http://rly.sx/index.php?",post_data="shorten=true&"+urllib.urlencode({"url":inp})))
         if "rly.sx" in data: return "http://"+data
         else: return data
     except http.URLError, e:
         return e
+    """
+    pass
 
 @hook.command
 def expand(inp, say=None):
@@ -196,9 +199,9 @@ def img(inp, say=None):
     except http.HTTPError, e:
         say(str(e)+": "+url)
         return
-    search = re.search('<a href="http://www.google.com/imgres?(.*?)imgurl=(.*?)&(.*?)"',data)
+    search = re.search('imgurl=http:\/\/(.*?)&(.*?)"',data)
     if search:
-        return (search.group(2).encode("utf8","ignore"))
+        return ("http://"+search.group(1).encode("utf8","ignore"))
     else:
         say("No results found.")
     print data
@@ -244,8 +247,8 @@ def whois(inp, input=None, conn=None, say=None):
         return "Unable to lookup %s"%url
 
 @hook.command
-def torrent(inp, input=None, conn=None, say=None):
-    "torrent <search> -- search TPB for torrents"
+def tpb(inp, input=None, conn=None, say=None):
+    "tbp <search> -- search TPB for torrents"
     s = inp.replace(" ","%20")
     page = http.get("http://thepiratebay.se/search/%s"%s)
     if page:
@@ -254,7 +257,7 @@ def torrent(inp, input=None, conn=None, say=None):
             d = re.search("""<font class="detDesc">(.*?), ULed by""",page)
             sl = re.findall("""\t\t<td align="right">(\d+)<\/td>\n\t\t<td align="right">(\d+)<\/td>""",page)
             out = "%s (%s, \00309S\003: %s, \00304L\003: %s) - \002http://thepiratebay.se/torrent/%s\002"%(data.group(3),HTMLParser.HTMLParser().unescape(d.group(1)),sl[0][0],sl[0][1],data.group(1))
-            say(out)   
+            say(out.encode("utf8","ignore").decode("utf8","ignore"))
         else:
             say("No torrents found")
     else:
