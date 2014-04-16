@@ -53,7 +53,6 @@ def getop(inp, input=None, conn=None, db=None):
         conn.cmd("MODE %s +o %s"%(input.chan,conn.nick))
         conn.cmd("PRIVMSG ChanServ :OP %s"%input.chan)
 
-@hook.singlethread
 @hook.command("sh")
 def runshell(inp, input=None, say=None, db=None, notice=None, conn=None):
     "runshell/sh <code> -- runs code in a shell. Needs 101 permission"
@@ -65,13 +64,22 @@ def runshell(inp, input=None, say=None, db=None, notice=None, conn=None):
         status, output = commands.getstatusoutput(inp.encode("utf8","ignore"))
         if output:
             output = output.split("\n")
-            if len(output) <= 4:
+            if len(output) == 1 and len(output[0]) <= 50:
+                say(output[0].decode('utf8','ignore'))
+            elif len(output) == 1 and len(output[0]) >= 51:
+                fname = "/srv/http/nathan.uk.to/sh/"+str(base64.b64encode(str(int(time.time()))).strip("="))+".txt"
+                f = open(fname,"w")
+                f.write("Output of `%s`\n------------------------------------------\n\n"%inp.encode("utf8","ignore"))
+                f.write(output[0].decode('utf8','ignore')+"\n")
+                f.close()
+                return "http://"+fname.replace("/srv/http/","")
+            elif len(output) <= 4:
                 for line in output:
                      say(line.decode('utf8','ignore'))
             else:
                 fname = "/srv/http/nathan.uk.to/sh/"+str(base64.b64encode(str(int(time.time()))).strip("="))+".txt"
                 f = open(fname,"w")
-                f.write("Output of %s\n------------------------------------------\n\n"%inp.encode("utf8","ignore"))
+                f.write("Output of `%s`\n------------------------------------------\n\n"%inp.encode("utf8","ignore"))
                 for line in output:
                     f.write(line.decode('utf8','ignore')+"\n")
                     #notice(line.decode('utf8','ignore'))

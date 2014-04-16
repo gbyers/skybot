@@ -117,7 +117,7 @@ def expand(inp, say=None):
 @hook.regex("(.*)>\$(.*)")
 def zeroclick(inp, say=None, input=None):
     "zeroclick/0click <search> -- gets zero-click info from DuckDuckGo"
-    if input.nick.lower() not in ["ovd|relay","nebulae"]:
+    if input.nick.lower() not in ["ovd|relay"] and "freenode" not in input.server:
         url = "http://duckduckgo.com/lite?"
         params = {"q":inp.group(2).replace("\001","").encode('utf8', 'ignore')}
         url = "http://duckduckgo.com/lite/?"+urllib.urlencode(params)
@@ -157,12 +157,14 @@ def imdb(inp, say=None):
 def googleplay(inp, say=None):
     "googleplay/gp <search> -- search Google Play"
     _search(inp+" site:play.google.com", say)
+    
+    
 
-#@hook.command("yt")
-#@hook.command
-#def youtube(inp, say=None):
-#    "youtube/yt <search> -- search YouTube"
-#    _search(inp+" site:youtube.com", say)
+@hook.command("ff")
+@hook.command
+def firefox(inp, say=None):
+    "firefox/ff <search> -- search for Firefox addons"
+    _search(inp+" site:addons.mozilla.org", say)
 
 @hook.command("wiki")
 @hook.command
