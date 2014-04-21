@@ -9,6 +9,10 @@ import math
 
 from util import hook, http, timesince
 
+connected = 0
+global conected
+connected = datetime.datetime.now()
+
 socket.setdefaulttimeout(10)  # global setting
 
 def get_version():
@@ -103,6 +107,7 @@ def update(inp, say=None):
 
 @hook.command(autohelp=False)
 def source(inp):
+    "source -- https://github.com/nathan0/skybot"
     return "https://github.com/nathan0/skybot"
     
 @hook.command
@@ -116,6 +121,7 @@ def timetotheendofallthings(inp):
 
 @hook.command
 def metrictime(inp):
+    "metrictime <hours(0-23)>:<minutes(0-59)>:<seconds(0-59)> -- convert 24-hour time into metric time"
     if inp.count(":") == 2:
         hours,minutes,seconds = inp.split(":")
         try:
@@ -148,7 +154,8 @@ def metrictime(inp):
 def list(inp, conn=None, input=None):
     conn.cmd("KICK %s %s :You suck, go away"%(input.chan,input.nick))
 
-@hook.event("PRIVMSG")
-def checklength(inp,conn=None,input=None):
-    if len(inp[1]) >= 2500:
-        conn.cmd("KICK %s %s :input.len >= 250"%(input.chan,input.nick))
+@hook.command("uptime",autohelp=False)
+def showuptime(inp):
+    "uptime -- shows how long I have been connected for"
+    uptime = timesince.timesince(connected)
+    return "I have been online for %s"%uptime

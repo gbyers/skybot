@@ -56,7 +56,7 @@ def getop(inp, input=None, conn=None, db=None):
 @hook.command("sh")
 def runshell(inp, input=None, say=None, db=None, notice=None, conn=None):
     "runshell/sh <code> -- runs code in a shell. Needs 101 permission"
-    if getPerms(input,db) == 101 and input.chan[0] == "&":
+    if getPerms(input,db) == 101:
         if "sudo" in inp: conn.cmd("PRIVMSG @& :-%s using sudo command: %s"%(input.nick,inp))
         #output = commands.getoutput(inp)
         if input.nick not in ["Ducky","cups","cup","nathan","doge"]:
