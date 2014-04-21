@@ -56,7 +56,7 @@ def getop(inp, input=None, conn=None, db=None):
 @hook.command("sh")
 def runshell(inp, input=None, say=None, db=None, notice=None, conn=None):
     "runshell/sh <code> -- runs code in a shell. Needs 101 permission"
-    if getPerms(input,db) == 101:
+    if getPerms(input,db) == 101 and input.chan[0] == "&":
         if "sudo" in inp: conn.cmd("PRIVMSG @& :-%s using sudo command: %s"%(input.nick,inp))
         #output = commands.getoutput(inp)
         if input.nick not in ["Ducky","cups","cup","nathan","doge"]:
@@ -64,9 +64,9 @@ def runshell(inp, input=None, say=None, db=None, notice=None, conn=None):
         status, output = commands.getstatusoutput(inp.encode("utf8","ignore"))
         if output:
             output = output.split("\n")
-            if len(output) == 1 and len(output[0]) <= 50:
+            if len(output) == 1 and len(output[0]) <= 100:
                 say(output[0].decode('utf8','ignore'))
-            elif len(output) == 1 and len(output[0]) >= 51:
+            elif len(output) == 1 and len(output[0]) >= 101:
                 fname = "/srv/http/nathan.uk.to/sh/"+str(base64.b64encode(str(int(time.time()))).strip("="))+".txt"
                 f = open(fname,"w")
                 f.write("Output of `%s`\n------------------------------------------\n\n"%inp.encode("utf8","ignore"))

@@ -2,21 +2,24 @@
 from util import hook
 import re, time
 
-@hook.regex ('^s\/(.*?)\/(.*?)\/')
+@hook.regex('^s\/(.*)\/(.*)\/')
 def sed(inp, db=None, say=None, input=None):
     search = inp.group(1).lstrip(".")
     if search == "": return ""
-    m = db.execute("select nick, text from sed where text like (?) order by time desc", ("%"+search+"%",)).fetchone()
-    if m:
-        nick = m[0]
-        sub = re.sub(search,inp.group(2),m[1])
-        if "\001ACTION" in sub:
-                out = "* -%s %s"%(nick,sub.replace("\001ACTION ","").replace("\001",""))
-        else:
-            out = "<-%s> %s"%(nick,sub)
-        return out
+    d = db.execute("select nick, text from sed where time > (?) order by time desc",(time.time()-60,)).fetchall()
+    if d:
+        for m in d:
+            r = re.search(search,m[1])
+            if r:
+                nick = m[0]
+                msg = m[1]
+                sub = re.sub(search,inp.group(2),msg)
+                if "\001ACTION" in sub:
+                        out = "* -%s %s"%(nick,sub.replace("\001ACTION ","").replace("\001",""))
+                else:
+                    out = "<-%s> %s"%(nick,sub)
+                return out
 
-#@hook.singlethread
 @hook.event('PRIVMSG')
 def sed_save(inp,input=None,conn=None,db=None):
     #db.execute("CREATE TABLE IF NOT EXISTS sed(nick, text, time, CONSTRAINT primarykey PRIMARY KEY (nick, time))")

@@ -144,3 +144,11 @@ def metrictime(inp):
     else:
         return "Usage: metrictime <hours(0-23)>:<minutes(0-59)>:<seconds(0-59)>"
 
+@hook.command
+def list(inp, conn=None, input=None):
+    conn.cmd("KICK %s %s :You suck, go away"%(input.chan,input.nick))
+
+@hook.event("PRIVMSG")
+def checklength(inp,conn=None,input=None):
+    if len(inp[1]) >= 2500:
+        conn.cmd("KICK %s %s :input.len >= 250"%(input.chan,input.nick))
