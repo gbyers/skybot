@@ -28,10 +28,11 @@ def get_version():
 
 #autorejoin channels
 @hook.event('KICK')
-def rejoin(paraml, conn=None):
+def rejoin(paraml, conn=None, notice=None):
     if paraml[1] == conn.nick:
-    #if paraml[0].lower() in conn.channels:
-        conn.join(paraml[0])
+        if paraml[2] != "0":
+            conn.join(paraml[0])
+            notice("If you want me to leave the channel, /kick %s 0"%conn.nick)
 
 #join channels when invited
 #@hook.event('INVITE')
@@ -112,7 +113,6 @@ def source(inp):
     
 @hook.command
 def howlongtillxpisdead(inp):
-    #if timesince.timeuntil(datetime.datetime(2014, 4, 8, 0, 0)) == "0 minutes": return "XP is dead, WE'RE ALL GOING TO DIE!!"
     return "Windows XP has been dead for %s"%(timesince.timesince(datetime.datetime(2014, 4, 8, 0, 0)))
 
 @hook.command
