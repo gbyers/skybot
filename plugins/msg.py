@@ -45,6 +45,7 @@ def read(inp, input=None, db=None, notice=None):
 
 @hook.event("JOIN")
 def onJoinMsg(inp, input=None, db=None, notice=None, conn=None):
+    db_init(db)
     c = getMsgCount(db,input.nick)
     if c > 0:
         notice("You have %s new messages. Type /msg %s ~~read to read them"%(str(c),conn.nick))
