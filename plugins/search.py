@@ -117,7 +117,7 @@ def expand(inp, say=None):
 @hook.regex("(.*)>\$(.*)")
 def zeroclick(inp, say=None, input=None):
     "zeroclick/0click <search> -- gets zero-click info from DuckDuckGo"
-    if input.nick.lower() not in ["ovd|relay"] and "freenode" not in input.server:
+    if input.nick.lower() not in ["ovd|relay"] and "b0rked" not in input.server:
         url = "http://duckduckgo.com/lite?"
         params = {"q":inp.group(2).replace("\001","").encode('utf8', 'ignore')}
         url = "http://duckduckgo.com/lite/?"+urllib.urlencode(params)
@@ -265,3 +265,10 @@ def tpb(inp, input=None, conn=None, say=None):
     else:
         say("Unable to load page")
 
+@hook.command
+def mcnametaken(inp, input=None, conn=None):
+    "mcnametaken <name> -- check if the Minecraft name is taken or not"
+    p = http.get("https://account.minecraft.net/buy/frame/checkName/%s"%inp)
+    if p:
+        if "TAKEN" in p: return "%s is taken."%inp
+        else: return "%s is not taken."%inp
