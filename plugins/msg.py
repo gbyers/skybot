@@ -6,14 +6,14 @@ def db_init(db):
     db.commit()
 
 def getMsgCount(db,nick):
-    return db.execute("select count(*) from msg where touser = (?)",(nick,)).fetchone()[0]
+    return db.execute("select count(*) from msg where touser like (?)",(nick,)).fetchone()[0]
 
 def sendMessage(db,id,touser,msg,fromuser,t):
     db.execute("insert into msg values (?,?,?,?,?,0,0)",(id,touser,fromuser,msg,t))
     db.commit()
 
 def getMsgs(db,user):
-    return db.execute("select * from msg where touser = (?)",(user,)).fetchall()
+    return db.execute("select * from msg where touser like (?)",(user,)).fetchall()
 
 @hook.command
 def msg(inp, input=None, db=None, notice=None, conn=None):
@@ -38,7 +38,7 @@ def read(inp, input=None, db=None, notice=None):
                 string = "Sent: %s ago; From: %s;"%(timesince.timesince(m[4]),m[2])
                 notice(string)
                 notice(m[3])
-                db.execute("delete from msg where touser = (?)",(input.nick,))
+                db.execute("delete from msg where touser like (?)",(input.nick,))
                 db.commit()
     else:
         return "You have no new messages."
