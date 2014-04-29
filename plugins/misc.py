@@ -30,14 +30,10 @@ def get_version():
 @hook.event('KICK')
 def rejoin(paraml, conn=None, notice=None):
     if paraml[1] == conn.nick:
-<<<<<<< HEAD
-        print " ".join(paraml)
         conn.join(paraml[0])
-=======
         if paraml[2] != "0":
             conn.join(paraml[0])
             notice("If you want me to leave the channel, /kick %s 0"%conn.nick)
->>>>>>> 01994f489f27357270d28c40cc8822269d662022
 
 #join channels when invited
 #@hook.event('INVITE')
