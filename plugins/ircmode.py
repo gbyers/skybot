@@ -57,34 +57,31 @@ def getop(inp, input=None, conn=None, db=None):
 def runshell(inp, input=None, say=None, db=None, notice=None, conn=None):
     "runshell/sh <code> -- runs code in a shell. Needs 101 permission"
     if getPerms(input,db) == 101:
-        if "sudo" in inp: conn.cmd("PRIVMSG @& :-%s using sudo command: %s"%(input.nick,inp))
-        #output = commands.getoutput(inp)
-        if input.nick not in ["Ducky","cups","cup","nathan","doge"]:
-            inp = re.sub("^(rm|killall|kill|dd|nc|shred|pkill|cat config)\s?","echo ",inp)
+        #if "sudo" in inp: conn.cmd("PRIVMSG @& :-%s using sudo command: %s"%(input.nick,inp))
         status, output = commands.getstatusoutput(inp.encode("utf8","ignore"))
         if output:
             output = output.split("\n")
             if len(output) == 1 and len(output[0]) <= 100:
                 say(output[0].decode('utf8','ignore'))
             elif len(output) == 1 and len(output[0]) >= 101:
-                fname = "/srv/http/nathan.uk.to/sh/"+str(base64.b64encode(str(int(time.time()))).strip("="))+".txt"
+                fname = "/srv/http/sh/"+str(base64.b64encode(str(int(time.time()))).strip("="))+".txt"
                 f = open(fname,"w")
                 f.write("Output of `%s`\n------------------------------------------\n\n"%inp.encode("utf8","ignore"))
                 f.write(output[0].decode('utf8','ignore')+"\n")
                 f.close()
-                return "http://"+fname.replace("/srv/http/","")
+                return "http://nathanb.pw/"+fname.replace("/srv/http/","")
             elif len(output) <= 4:
                 for line in output:
                      say(line.decode('utf8','ignore'))
             else:
-                fname = "/srv/http/nathan.uk.to/sh/"+str(base64.b64encode(str(int(time.time()))).strip("="))+".txt"
+                fname = "/srv/http/sh/"+str(base64.b64encode(str(int(time.time()))).strip("="))+".txt"
                 f = open(fname,"w")
                 f.write("Output of `%s`\n------------------------------------------\n\n"%inp.encode("utf8","ignore"))
                 for line in output:
                     f.write(line.decode('utf8','ignore')+"\n")
                     #notice(line.decode('utf8','ignore'))
                 f.close()
-                return "http://"+fname.replace("/srv/http/","")
+                return "http://nathanb.pw/"+fname.replace("/srv/http/","")
         else: return status
 
 @hook.command(autohelp=False)

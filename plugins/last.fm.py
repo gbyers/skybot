@@ -68,7 +68,7 @@ def lastfm(inp, nick='', say=None, api_key=None, db=None):
         if inp:
             return "error: %s" % response["message"]
         else:
-            return "your nick is not a Last.fm account. try '.lastfm username'."
+            return "your nick is not a Last.fm account. try 'lastfm <username>'."
 
     if not "track" in response["recenttracks"] or len(response["recenttracks"]["track"]) == 0:
         return "no recent tracks for user \x02%s\x0F found" % user

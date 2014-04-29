@@ -22,7 +22,7 @@ def sed(inp, db=None, say=None, input=None):
 
 @hook.event('PRIVMSG')
 def sed_save(inp,input=None,conn=None,db=None):
-    #db.execute("CREATE TABLE IF NOT EXISTS sed(nick, text, time, CONSTRAINT primarykey PRIMARY KEY (nick, time))")
+    db.execute("CREATE TABLE IF NOT EXISTS sed(nick, text, time, CONSTRAINT primarykey PRIMARY KEY (nick, time))")
     m = re.search("s\/(.*)\/(.*)\/?",inp[1])
     if not m:
         time.sleep(0.3)

@@ -30,7 +30,7 @@ def get_version():
 @hook.event('KICK')
 def rejoin(paraml, conn=None):
     if paraml[1] == conn.nick:
-    #if paraml[0].lower() in conn.channels:
+        print " ".join(paraml)
         conn.join(paraml[0])
 
 #join channels when invited
