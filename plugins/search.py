@@ -117,7 +117,7 @@ def expand(inp, say=None):
 @hook.regex("(.*)>\$(.*)")
 def zeroclick(inp, say=None, input=None):
     "zeroclick/0click <search> -- gets zero-click info from DuckDuckGo"
-    if input.nick.lower() not in ["ovd|relay"] and "b0rked" not in input.server:
+    if input.nick.lower() not in ["Nebulae"] and "b0rked" not in input.server:
         url = "http://duckduckgo.com/lite?"
         params = {"q":inp.group(2).replace("\001","").encode('utf8', 'ignore')}
         url = "http://duckduckgo.com/lite/?"+urllib.urlencode(params)
