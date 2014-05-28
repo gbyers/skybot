@@ -30,7 +30,6 @@ def get_version():
 @hook.event('KICK')
 def rejoin(paraml, conn=None, notice=None):
     if paraml[1] == conn.nick:
-        conn.join(paraml[0])
         if paraml[2] != "0":
             conn.join(paraml[0])
             notice("If you want me to leave the channel, /kick %s 0"%conn.nick)
@@ -160,3 +159,9 @@ def showuptime(inp):
     "uptime -- shows how long I have been connected for"
     uptime = timesince.timesince(connected)
     return "I have been online for %s"%uptime
+
+#@hook.command
+#def restart(inp, conn=None):
+#    conn.cmd("QUIT :Restarting")
+#    PID = os.getpid()
+#    commands.getoutput("kill %s;python2 bot.py"%PID)

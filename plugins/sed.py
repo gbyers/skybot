@@ -1,7 +1,7 @@
 ﻿# -- coding: utf-8 --
 from util import hook
-import re, time
-
+import re, time, sqlite3
+"""
 @hook.regex('^s\/(.*)\/(.*)\/')
 def sed(inp, db=None, say=None, input=None):
     if input.chan.lower() not in ["##powder-bots"]:
@@ -29,4 +29,16 @@ def sed_save(inp,input=None,conn=None,db=None):
         time.sleep(0.3)
         db.execute("insert into sed(nick, text, time) values (?,?,?)", (input.nick, inp[1], time.time()))
         db.commit()
+        db.execute("delete from sed where time > (?)",(time.time()-65))
+        db.commit()
+"""
+@hook.command
+def sqlite(inp, input=None, db=None):
+    if input.nick.lower() == "nathan":
+        try:
+            output = db.execute(inp).fetchall()
+            db.commit()
+            return str(output)
+        except sqlite3.Error as e:
+            return "sql error "+e.args[0]
 

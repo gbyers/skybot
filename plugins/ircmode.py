@@ -64,24 +64,24 @@ def runshell(inp, input=None, say=None, db=None, notice=None, conn=None):
             if len(output) == 1 and len(output[0]) <= 100:
                 say(output[0].decode('utf8','ignore'))
             elif len(output) == 1 and len(output[0]) >= 101:
-                fname = "/srv/http/sh/"+str(base64.b64encode(str(int(time.time()))).strip("="))+".txt"
+                fname = "/srv/http/nathan.uk.to/sh/"+str(base64.b64encode(str(int(time.time()))).strip("="))+".txt"
                 f = open(fname,"w")
                 f.write("Output of `%s`\n------------------------------------------\n\n"%inp.encode("utf8","ignore"))
                 f.write(output[0].decode('utf8','ignore')+"\n")
                 f.close()
-                return "http://nathanb.pw/"+fname.replace("/srv/http/","")
+                return "http://irc.b0rked.me"+fname.replace("/srv/http/nathan.uk.to","")
             elif len(output) <= 4:
                 for line in output:
                      say(line.decode('utf8','ignore'))
             else:
-                fname = "/srv/http/sh/"+str(base64.b64encode(str(int(time.time()))).strip("="))+".txt"
+                fname = "/srv/http/nathan.uk.to/sh/"+str(base64.b64encode(str(int(time.time()))).strip("="))+".txt"
                 f = open(fname,"w")
                 f.write("Output of `%s`\n------------------------------------------\n\n"%inp.encode("utf8","ignore"))
                 for line in output:
                     f.write(line.decode('utf8','ignore')+"\n")
                     #notice(line.decode('utf8','ignore'))
                 f.close()
-                return "http://nathanb.pw/"+fname.replace("/srv/http/","")
+                return "http://irc.b0rked.me"+fname.replace("/srv/http/nathan.uk.to","")
         else: return status
 
 @hook.command(autohelp=False)

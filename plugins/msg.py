@@ -22,9 +22,12 @@ def msg(inp, input=None, db=None, notice=None, conn=None):
     n = m[0]
     m = " ".join(m[1:])
     c = getMsgCount(db,n)
-    sendMessage(db,c,n,m,input.nick,time.time())
-    conn.cmd("NOTICE %s :You have 1 new message. Type /msg %s ~~read to read it."%(n,conn.nick))
-    notice("Your message has been sent")
+    if m:
+        sendMessage(db,c,n,m,input.nick,time.time())
+        conn.cmd("NOTICE %s :You have 1 new message. Type /msg %s ~~read to read it."%(n,conn.nick))
+        notice("Your message has been sent")
+    else:
+        notice("Can't send blank message")
 
 @hook.command(autohelp=False)
 def read(inp, input=None, db=None, notice=None):
