@@ -34,11 +34,14 @@ def sed_save(inp,input=None,conn=None,db=None):
 """
 @hook.command
 def sqlite(inp, input=None, db=None):
-    if input.nick.lower() == "nathan":
+    if input.nick.lower() in ["nathan","doge","c[_]"]:
         try:
             output = db.execute(inp).fetchall()
             db.commit()
-            return str(output)
+            if output:
+                return str(output)
+            else:
+                return "Done"
         except sqlite3.Error as e:
             return "sql error "+e.args[0]
 

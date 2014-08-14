@@ -2,10 +2,12 @@ import inspect
 #import simplejson as json
 import json
 import os
+import time
 
 
 def save(conf):
-    json.dump(conf, open('config', 'w'), sort_keys=True, indent=2)
+    json.dump(conf, open('config', 'w'), sort_keys=True, indent=4)
+    print "Config Saved at %s"%time.asctime()
 
 if not os.path.exists('config'):
     open('config', 'w').write(inspect.cleandoc(
@@ -46,6 +48,7 @@ def config():
         try:
             bot.config = json.load(open('config'))
             bot._config_mtime = config_mtime
+            bot.save = save(bot.config)
         except ValueError, e:
             print 'ERROR: malformed config!', e
 

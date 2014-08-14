@@ -14,7 +14,7 @@ def sieve_suite(bot, input, func, kind, args):
             return None
 
         ignored = bot.config.get('ignored', [])
-        if input.host in ignored or input.nick in ignored:
+        if input.host.lower() in ignored or input.nick.lower() in ignored:
             return None
 
     fn = re.match(r'^plugins.(.+).py$', func._filename)

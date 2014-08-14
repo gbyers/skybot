@@ -8,6 +8,7 @@ ignoreNicks = []
 
 trusted = [
     "gateway/web/b0rked.me/ip.127.0.0.69",
+    "botters/doge",
 ]
 
 @hook.command
@@ -52,15 +53,15 @@ def relay(inp, input=None, say=None, conn=None):
             else:
                 return ("No relay running")
 
-formats = {'PRIVMSG': '<%(chan)s/-%(nick)s> %(msg)s',
-    'PART': '%(nick)s [%(user)s@%(host)s] has left %(chan)s',
-    'JOIN': '%(nick)s [%(user)s@%(host)s] has joined %(param0)s',
-    'MODE': 'mode/%(chan)s [%(param_tail)s] by %(nick)s',
-    'KICK': '%(param1)s was kicked from %(chan)s by %(nick)s [%(msg)s]',
-    'TOPIC': '%(nick)s changed the topic of %(chan)s to: %(msg)s',
+formats = {'PRIVMSG': '[%(chan)s] <-%(nick)s> %(msg)s',
+    'PART': '[%(chan)s] -%(nick)s [%(user)s@%(host)s] has left',
+    'JOIN': '[%(param0)s] -%(nick)s [%(user)s@%(host)s] has joined',
+    'MODE': '[%(chan)s] -%(nick)s set modes %(param_tail)s',
+    'KICK': '[%(chan)s] -%(param1)s was kicked by -%(nick)s [%(msg)s]',
+    'TOPIC': '[%(chan)s] -%(nick)s changed the topic to: %(msg)s',
     'QUIT': '%(nick)s has quit [%(msg)s]',
     'PING': '',
-    'NOTICE': '<%(nick)s> %(msg)s',
+    'NOTICE': '',
     'NICK': '%(nick)s is now known as %(msg)s'
 }
 

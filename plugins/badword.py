@@ -2,11 +2,11 @@ from util import hook
 import time, re
 
 privmsg = {}
-badwords = ["\007"]
+badwords = ["\000"]
 
 @hook.command
 def addbadword(inp, input=None):
-    if input.nick in ["nathan","cups"]:
+    if input.nick in ["nathan","cups","doge"]:
         if inp.lower() not in badwords:
             time.sleep(1)
             badwords.append(inp)
@@ -16,13 +16,13 @@ def addbadword(inp, input=None):
 
 @hook.command
 def delbadword(inp, input=None):
-    if input.nick in ["nathan","cups"]:
+    if input.nick in ["nathan","cups","doge"]:
         badwords.remove(inp)
         return "Done"
 
 @hook.command
 def badwordlist(inp, input=None):
-    if input.nick in ["nathan","cups"]:
+    if input.nick in ["nathan","cups","doge"]:
         return ", ".join(badwords)
 
 @hook.event('PRIVMSG')

@@ -22,12 +22,14 @@ def msg(inp, input=None, db=None, notice=None, conn=None):
     n = m[0]
     m = " ".join(m[1:])
     c = getMsgCount(db,n)
-    if m:
+    if m and n[0] not in ["#","&"]:
         sendMessage(db,c,n,m,input.nick,time.time())
         conn.cmd("NOTICE %s :You have 1 new message. Type /msg %s ~~read to read it."%(n,conn.nick))
         notice("Your message has been sent")
+    elif n[0] in ["#","&"]:
+        return ("Can't send message to channel")
     else:
-        notice("Can't send blank message")
+        return ("Can't send blank message")
 
 @hook.command(autohelp=False)
 def read(inp, input=None, db=None, notice=None):

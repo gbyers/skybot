@@ -9,11 +9,7 @@ import math
 
 from util import hook, http, timesince
 
-connected = 0
-global conected
-connected = datetime.datetime.now()
-
-socket.setdefaulttimeout(10)  # global setting
+socket.setdefaulttimeout(30)
 
 def get_version():
     p = subprocess.Popen(['git', 'log', '--oneline'], stdout=subprocess.PIPE)
@@ -67,12 +63,13 @@ def onjoin(paraml, conn=None):
 @hook.regex(r'^\x01VERSION\x01$')
 def version(inp, notice=None):
     ident, rev, source = get_version()
-    notice('\x01VERSION %s %s source: %s\x01' % (ident, rev, source))
+    notice('\x01VERSION %s-%s source: %s\x01' % (ident, rev, source))
 
 @hook.regex(r'^\x01PING\s(.*)\x01$')
-def ping(inp, notice=None):
+def ping(inp, notice=None, bot=None):
     reply = inp.group(1)
     notice('\x01PING %s\x01' % reply)
+    bot.save
 
 
 @hook.command("gi",autohelp=False)
@@ -85,31 +82,34 @@ def getinfo(inp, say=None, input=None):
     memory = int(commands.getoutput("cat /proc/%s/status | grep VmRSS | awk '{print $2}'"%PID))/1000
     say("Version: %s-%s; PID: %s; Hostname: %s; Threads: %s; Virtual Memory: %s MB"%(ident,rev,os.getpid(),socket.gethostname(),threads,memory))
 
-@hook.command(autohelp=None)
-def update(inp, say=None):
-    p = subprocess.Popen(['git', 'log', '--oneline'], stdout=subprocess.PIPE)
-    stdout, _ = p.communicate()
-    p.wait()
-    curver = stdout.split(None, 1)[0]
-    page = http.get("https://github.com/nathan0/skybot/commits/master")
-    ver = re.search("""<span class="sha">(.*)<span class="octicon octicon-arrow-small-right"><\/span><\/span>""",page)
-    lupd = re.search("""<a href="\/nathan0\/skybot\/commit\/(.*)" class="message" data-pjax="true" title="(.*)">(.*)<\/a>""",page)
-    if ver and lupd:
-        if ver.group(1)[0:7] != curver:
-            say("Current: %s Newest changes: %s - %s"%(curver,lupd.group(3),lupd.group(1)[0:7]))
-            p = subprocess.Popen(['git', 'pull', 'origin', 'master'], stdout=subprocess.PIPE)
-            stdout, _ = p.communicate()
-            p.wait()
-            say("Updated")
-        else:
-            return "Already up-to-date."
-    else:
-        return "Unable to check current version."
+#@hook.command(autohelp=None)
+#def update(inp, say=None):
+#    p = subprocess.Popen(['git', 'log', '--oneline'], stdout=subprocess.PIPE)
+#    stdout, _ = p.communicate()
+#    p.wait()
+#    curver = stdout.split(None, 1)[0]
+#    page = http.get("https://github.com/nathan0/skybot/commits/master")
+#    ver = re.search("""<span class="sha">(.*)<span class="octicon octicon-arrow-small-right"><\/span><\/span>""",page)
+#    lupd = re.search("""<a href="\/nathan0\/skybot\/commit\/(.*)" class="message" data-pjax="true" title="(.*)">(.*)<\/a>""",page)
+#    if ver and lupd:
+#        if ver.group(1)[0:7] != curver:
+#            say("Current: %s Newest changes: %s - %s"%(curver,lupd.group(3),lupd.group(1)[0:7]))
+#            p = subprocess.Popen(['git', 'pull', 'origin', 'master'], stdout=subprocess.PIPE)
+#            stdout, _ = p.communicate()
+#            p.wait()
+#            say("Updated")
+#        else:
+#            return "Already up-to-date."
+#    else:
+#        return "Unable to check current version."
 
 @hook.command(autohelp=False)
 def source(inp):
     "source -- https://github.com/nathan0/skybot"
-    return "https://github.com/nathan0/skybot"
+    if inp:
+        return "https://github.com/nathan0/skybot/blob/master/%s"%inp
+    else:
+        return "https://github.com/nathan0/skybot"
     
 @hook.command
 def howlongtillxpisdead(inp):
@@ -157,7 +157,10 @@ def list(inp, conn=None, input=None):
 @hook.command("uptime",autohelp=False)
 def showuptime(inp):
     "uptime -- shows how long I have been connected for"
-    uptime = timesince.timesince(connected)
+    f = open("uptime","r")
+    uptime = f.read()
+    f.close()
+    uptime = timesince.timesince(float(uptime))
     return "I have been online for %s"%uptime
 
 #@hook.command

@@ -49,6 +49,9 @@ if not os.path.exists(bot.persist_dir):
     os.mkdir(bot.persist_dir)
 
 print 'Running main loop'
+f = open("uptime","w")
+f.write(str(time.time()))
+f.close()
 
 while True:
     reload()  # these functions only do things

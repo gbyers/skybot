@@ -4,11 +4,11 @@ import sys, re, commands, math, cmath, random, time, subprocess
 
 @hook.command
 def python(inp, input=None):
-    if input.nick.lower() in ["cups","nathan","jacob1"]:
+    if input.host.lower() in ["botters/doge","gateway/web/b0rked.me/ip.127.0.0.69", "fenshire.zo.gg"]:
         return pysandbox(inp)
 
 def pysandbox(msg=None):
-    if not msg: sys.exit("No Code")
+    if not msg: return "No Code"
     else:
         if ".__" in msg: return "Nope"
         if "['__" in msg and "__']" in msg or "[\"__" in msg and "__\"]" in msg: return "Nope"
