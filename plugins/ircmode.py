@@ -5,13 +5,13 @@ import time, commands, re, random, base64
 users = []
 channels = {}
 
-@hook.event("PING")
-@hook.event("PONG")
-def test(inp,bot=None,conn=None,input=None):
-    bot.save
+#@hook.event("PING")
+#@hook.event("PONG")
+#def test(inp,bot=None,conn=None,input=None):
+#    bot.save
 
 @hook.command
-def ignore(inp,bot=None,input=None,db=None):
+def toggleignore(inp,bot=None,input=None,db=None):
     if getPerms(input,db) == 101:
         if inp.lower() not in bot.config["ignored"]:
             bot.config["ignored"].append(inp.lower())
@@ -26,7 +26,7 @@ def ignorelist(inp,bot=None,input=None,db=None):
         return "; ".join(bot.config["ignored"])
 
 @hook.command
-def ignorecommand(inp,bot=None,input=None,db=None):
+def togglecommand(inp,bot=None,input=None,db=None):
     if getPerms(input,db) == 101:
         if " " in inp:
             disabledcmds = []
@@ -65,8 +65,8 @@ def getPerms(input,db):
     db.execute("create table if not exists permissions (user,level,added,time)")
     db.commit()
     #return 101
-    #user = input.user+"@"+input.host
-    user = "%@"+input.host
+    user = input.user+"@"+input.host
+    #user = "%@"+input.host
     data = db.execute("select user,level from permissions where user LIKE (?)",(user,)).fetchone()
     if data:
         return int(data[1])
@@ -115,28 +115,31 @@ def runshell(inp, input=None, say=None, db=None, notice=None, conn=None):
     if getPerms(input,db) == 101:
         status, output = commands.getstatusoutput(inp.encode("utf8","ignore"))
         if output:
+            f = open("cmdlog.txt","a+")
+            f.write("%s - %s - `%s`\r\n"%(time.strftime("%d/%m/%y %H:%M:%S"),input.nick,inp))
+            f.close()
             output = output.split("\n")
             if len(output) == 1 and len(output[0]) <= 100:
                 say(output[0].decode('utf8','ignore'))
             elif len(output) == 1 and len(output[0]) >= 101:
-                fname = "/srv/http/nathan.uk.to/sh/"+str(base64.b64encode(str(int(time.time()))).strip("="))+".txt"
+                fname = "/srv/http/"+str(base64.b64encode(str(int(time.time()))).strip("="))+".txt"
                 f = open(fname,"w")
                 f.write("Output of `%s`\n------------------------------------------\n\n"%inp.encode("utf8","ignore"))
                 f.write(output[0].decode('utf8','ignore')+"\n")
                 f.close()
-                return "http://were.up.all.night.to.get.ducky.ws"+fname.replace("/srv/http/nathan.uk.to","")
+                return "http://http.102.xe.zyr.io"+fname.replace("/srv/http","")
             elif len(output) <= 4:
                 for line in output:
                      say(line.decode('utf8','ignore'))
             else:
-                fname = "/srv/http/nathan.uk.to/sh/"+str(base64.b64encode(str(int(time.time()))).strip("="))+".txt"
+                fname = "/srv/http/"+str(base64.b64encode(str(int(time.time()))).strip("="))+".txt"
                 f = open(fname,"w")
                 f.write("Output of `%s`\n------------------------------------------\n\n"%inp.encode("utf8","ignore"))
                 for line in output:
                     f.write(line.decode('utf8','ignore')+"\n")
                     #notice(line.decode('utf8','ignore'))
                 f.close()
-                return "http://were.up.all.night.to.get.ducky.ws"+fname.replace("/srv/http/nathan.uk.to","")
+                return "http://http.102.xe.zyr.io"+fname.replace("/srv/http","")
         else: return status
 
 @hook.command(autohelp=False)
@@ -332,7 +335,8 @@ def mute(inp, conn=None, input=None, db=None):
         user = inp
     if user.lower() in users and getPerms(input,db) >= 50:
         if channels[input.chan.lower()].has_key(user.lower()):
-            mask = "*!"+channels[input.chan.lower()][user.lower()]["ident"]+"@"+channels[input.chan.lower()][user.lower()]["host"]
+            #mask = "*!"+channels[input.chan.lower()][user.lower()]["ident"]+"@"+channels[input.chan.lower()][user.lower()]["host"]
+            mask = "*!*@"+channels[input.chan][user.lower()]["host"]
             conn.send("MODE %s +b ~q:%s"%(input.chan,mask))
         else:
             conn.send("MODE %s +b ~q:%s"%(input.chan,user))
@@ -348,7 +352,8 @@ def unmute(inp, conn=None, input=None, db=None):
         user = inp
     if user.lower() in users and getPerms(input,db) >= 50:
         if channels[input.chan.lower()].has_key(user.lower()):
-            mask = "*!"+channels[input.chan.lower()][user.lower()]["ident"]+"@"+channels[input.chan.lower()][user.lower()]["host"]
+            #mask = "*!"+channels[input.chan.lower()][user.lower()]["ident"]+"@"+channels[input.chan.lower()][user.lower()]["host"]
+            mask = "*!*@"+channels[input.chan][user.lower()]["host"]
             conn.send("MODE %s -b ~q:%s"%(input.chan,mask))
         else:
             conn.send("MODE %s -b ~q:%s"%(input.chan,user))
@@ -364,7 +369,8 @@ def quiet(inp, conn=None, input=None, db=None):
         user = inp
     if user.lower() in users and getPerms(input,db) >= 50:
         if channels[input.chan.lower()].has_key(user.lower()):
-            mask = "*!"+channels[input.chan.lower()][user.lower()]["ident"]+"@"+channels[input.chan.lower()][user.lower()]["host"]
+            #mask = "*!"+channels[input.chan.lower()][user.lower()]["ident"]+"@"+channels[input.chan.lower()][user.lower()]["host"]
+            mask = "*!*@"+channels[input.chan][user.lower()]["host"]
             conn.send("MODE %s +q %s"%(input.chan,mask))
         else:
             conn.send("MODE %s +q %s"%(input.chan,user))
@@ -380,7 +386,8 @@ def unquiet(inp, conn=None, input=None, db=None):
         user = inp
     if user.lower() in users and getPerms(input,db) >= 50:
         if channels[input.chan.lower()].has_key(user.lower()):
-            mask = "*!"+channels[input.chan.lower()][user.lower()]["ident"]+"@"+channels[input.chan.lower()][user.lower()]["host"]
+            #mask = "*!"+channels[input.chan.lower()][user.lower()]["ident"]+"@"+channels[input.chan.lower()][user.lower()]["host"]
+            mask = "*!*@"+channels[input.chan][user.lower()]["host"]
             conn.send("MODE %s -q %s"%(input.chan,mask))
         else:
             conn.send("MODE %s -q %s"%(input.chan,user))
@@ -409,7 +416,8 @@ def ban(inp, conn=None, input=None, db=None):
         user = inp
     if user.lower() in users and getPerms(input,db) >= 50:
         if channels[input.chan.lower()].has_key(user.lower()):
-            mask = "*!"+channels[input.chan.lower()][user.lower()]["ident"]+"@"+channels[input.chan.lower()][user.lower()]["host"]
+            #mask = "*!"+channels[input.chan.lower()][user.lower()]["ident"]+"@"+channels[input.chan.lower()][user.lower()]["host"]
+            mask = "*!*@"+channels[input.chan][user.lower()]["host"]
             conn.send("MODE %s +b %s"%(input.chan,mask))
         else:
             conn.send("MODE %s +b %s"%(input.chan,user))
@@ -422,7 +430,8 @@ def unban(inp, conn=None, input=None, db=None):
     user = inp
     if user.lower() in users and getPerms(input,db) >= 50:
         if channels[input.chan].has_key(user.lower()):
-            mask = "*!"+channels[input.chan][user.lower()]["ident"]+"@"+channels[input.chan][user.lower()]["host"]
+            #mask = "*!"+channels[input.chan][user.lower()]["ident"]+"@"+channels[input.chan][user.lower()]["host"]
+            mask = "*!*@"+channels[input.chan][user.lower()]["host"]
             conn.send("MODE %s -b %s"%(input.chan,mask))
         else:
             conn.send("MODE %s -b %s"%(input.chan,user))
@@ -448,3 +457,10 @@ def remove(inp, input=None, conn=None, db=None):
             reason = input.nick
         conn.send("REMOVE %s %s :%s"%(input.chan,nick,reason))
 
+@hook.command
+def choose(inp, input=None):
+    if "," in inp:
+        s = inp.split(",")
+        if s[0] and s[1]:
+            s = s[random.randint(0,len(s)-1)]
+            return s.strip()

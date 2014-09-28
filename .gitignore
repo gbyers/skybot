@@ -13,3 +13,4 @@ plugins/torrent.py
 age
 age
 www
+plugins/eval.py

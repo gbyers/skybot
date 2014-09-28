@@ -161,7 +161,7 @@ def main(conn, out):
     if inp.command == 'PRIVMSG':
         # COMMANDS
 
-        prefix = u'^(?:~~|'
+        prefix = u'^(?:\||'
 
         command_re = prefix + inp.conn.nick
         command_re += r'[:,]+\s+)(\w+)(?:$|\s+)(.*)'

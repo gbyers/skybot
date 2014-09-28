@@ -8,22 +8,28 @@ versions = {}
 def ping(inp, input=None, conn=None):
     "ping [nick] -- returns ping time for you or [nick]"
     ptime = time.time()
-    if inp:
-        pings[inp.lower()] = "%s;%s"%(input.chan,ptime)
-        conn.send("PRIVMSG %s :\001PING %s\001"%(inp,ptime))
+    if inp[0] != "#":
+        if inp:
+            pings[inp.lower()] = "%s;%s"%(input.chan,ptime)
+            conn.send("PRIVMSG %s :\001PING %s\001"%(inp,ptime))
+        else:
+            pings[input.nick.lower()] = "%s;%s"%(input.chan,ptime)
+            conn.send("PRIVMSG %s :\001PING %s\001"%(input.nick,ptime))
     else:
-        pings[input.nick.lower()] = "%s;%s"%(input.chan,ptime)
-        conn.send("PRIVMSG %s :\001PING %s\001"%(input.nick,ptime))
+        return "Cannot CTCP channels"
 
 @hook.command(autohelp=False)
 def version(inp, input=None, conn=None):
     "version [nick] -- returns version for you or [nick]"
-    if inp:
-        versions[inp.lower()] = input.chan
-        conn.send("PRIVMSG %s :\001VERSION\001"%(inp))
+    if inp[0] != "#":
+        if inp:
+            versions[inp.lower()] = input.chan
+            conn.send("PRIVMSG %s :\001VERSION\001"%(inp))
+        else:
+            versions[input.nick.lower()] = input.chan
+            conn.send("PRIVMSG %s :\001VERSION\001"%(input.nick))
     else:
-        versions[input.nick.lower()] = input.chan
-        conn.send("PRIVMSG %s :\001VERSION\001"%(input.nick))
+        return "Cannot CTCP channels"
 
 @hook.event('NOTICE')
 def _ping(inp, input=None, conn=None):

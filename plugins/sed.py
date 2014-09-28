@@ -29,8 +29,8 @@ def sed_save(inp,input=None,conn=None,db=None):
         time.sleep(0.3)
         db.execute("insert into sed(nick, text, time) values (?,?,?)", (input.nick, inp[1], time.time()))
         db.commit()
-        db.execute("delete from sed where time > (?)",(time.time()-65))
-        db.commit()
+        #db.execute("delete from sed where time > (?)",(time.time()-65))
+        #db.commit()
 """
 @hook.command
 def sqlite(inp, input=None, db=None):

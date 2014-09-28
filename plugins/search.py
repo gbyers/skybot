@@ -1,6 +1,6 @@
 # -- coding: utf-8 --
 from util import hook, http
-import re, HTMLParser, urllib, time
+import re, HTMLParser, urllib, time, requests
 
 @hook.command("wp")
 @hook.command
@@ -114,7 +114,7 @@ def expand(inp, say=None):
 
 #@hook.command("0click")
 #@hook.command
-@hook.regex("(.*)>\$(.*)")
+@hook.regex("(.*)>\$\s(.*)")
 def zeroclick(inp, say=None, input=None):
     "zeroclick/0click <search> -- gets zero-click info from DuckDuckGo"
     if input.nick.lower() not in ["Nebulae"] and "overdrive" not in input.server:
@@ -157,8 +157,6 @@ def imdb(inp, say=None):
 def googleplay(inp, say=None):
     "googleplay/gp <search> -- search Google Play"
     _search(inp+" site:play.google.com", say)
-    
-    
 
 @hook.command("ff")
 @hook.command
@@ -196,17 +194,12 @@ def pomf(inp, say=None):
 def img(inp, say=None):
     "img <search> -- search Google Images"
     url = "http://www.google.com/search?"+urllib.urlencode({"q":inp,"tbm":"isch"})
+    url = "http://duckduckgo.com/i.js?"+urllib.urlencode({"q":inp,"o":"json"})
     try:
-        data = http.get(url)
-    except http.HTTPError, e:
-        say(str(e)+": "+url)
-        return
-    search = re.search('imgurl=http:\/\/(.*?)&(.*?)"',data)
-    if search:
-        return ("http://"+search.group(1).encode("utf8","ignore"))
-    else:
-        say("No results found.")
-    print data
+        data = requests.get(url).json()
+    except:
+        return "Could not find image"
+    return data["results"][0]["j"]
 
 @hook.command
 def suggest(inp, input=None, conn=None, say=None):
@@ -272,3 +265,4 @@ def mcnametaken(inp, input=None, conn=None):
     if p:
         if "TAKEN" in p: return "%s is taken."%inp
         else: return "%s is not taken."%inp
+

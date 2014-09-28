@@ -19,6 +19,7 @@ def lastfmcompare(inp, nick='', say=None, api_key=None):
 
     if "@attr" in response["comparison"]["result"]["artists"]:
         score = int(float(response["comparison"]["result"]["score"][0:4])*100)
+        score = round(float(response["comparison"]["result"]["score"])*100,2)
         match = response["comparison"]["result"]["artists"]["@attr"]["matches"]
         say("\x02%s\x02 and \x02%s\x02 have a \x02%s%%\x02 match on last.fm"%(user1,user2,score))
     else:

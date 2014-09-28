@@ -4,7 +4,7 @@ import sys, re, commands, math, cmath, random, time, subprocess
 
 @hook.command
 def python(inp, input=None):
-    if input.host.lower() in ["botters/doge","gateway/web/b0rked.me/ip.127.0.0.69", "fenshire.zo.gg"]:
+    if input.host.lower() in ["botters/doge","gateway/web/b0rked.me/ip.127.0.0.69", "dukdukd.uk","2001:41d0:8:991a:0:0:0:1","znc.rly.sx"]:
         return pysandbox(inp)
 
 def pysandbox(msg=None):

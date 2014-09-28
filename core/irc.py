@@ -22,7 +22,7 @@ def censor(text):
     if 'censored_strings' in bot.config:
         words = map(re.escape, bot.config['censored_strings'])
         regex = re.compile('(%s)' % "|".join(words))
-        text = regex.sub(replacement, text)
+        text = regex.sub(replacement, text.replace(r"",""))
     return text
 
 

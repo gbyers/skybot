@@ -6,6 +6,7 @@ import os
 import commands
 import datetime
 import math
+import random
 
 from util import hook, http, timesince
 
@@ -151,6 +152,10 @@ def metrictime(inp):
         return "Usage: metrictime <hours(0-23)>:<minutes(0-59)>:<seconds(0-59)>"
 
 @hook.command
+def kinksmeetup(inp):
+    return "There is %s left till #KinksMeetup2015 (TBC)"%(timesince.timeuntil(datetime.datetime(2015, 4, 17, 0, 0)))
+
+@hook.command
 def list(inp, conn=None, input=None):
     conn.cmd("KICK %s %s :You suck, go away"%(input.chan,input.nick))
 
@@ -168,3 +173,28 @@ def showuptime(inp):
 #    conn.cmd("QUIT :Restarting")
 #    PID = os.getpid()
 #    commands.getoutput("kill %s;python2 bot.py"%PID)
+"""
+@hook.regex("(karkat|pipey)")
+def add(inp, input=None, conn=None):
+    if conn.server == "subluminal.znc.rly.sx":
+        c = random.randint(0,3)
+        n = 0
+        while n <= c:
+            conn.cmd("PRIVMSG | :.add")
+            time.sleep(0.8)
+            n = n+1
+"""
+@hook.command
+def cuddlerape(inp, input=None):
+    if input.prefix in [":nathan!nathan@dukdukd.uk",":doge!~cups@botters/doge",":nathan!nathan@rly.sx",":nathan!nathan@-"] and input.server in ["subluminal.znc.rly.sx","overdrive.ducky.ws","opera.ducky.ws"]:
+        if inp.count(" ") == 1:
+            img = inp.split(" ")[1]
+            nsfw = inp.split(" ")[0]
+        else:
+            img = inp
+            nsfw = None
+        f = commands.getoutput("ls /srv/http/cuddlerape.me/upload/u/ -l | grep %s | awk '{print $9}'"%img)
+        if nsfw: output = "\002\00304[NSFW]\003\002 "
+        else: output = ""
+        output+= "http://u.cuddlerape.me/u/%s"%f
+        input.say(output)
