@@ -1,0 +1,12 @@
+28/09/14 23:31:37 - nathan - `git pull`
+29/09/14 02:14:59 - nathan - `env x='() ; echo vulnerable' bash -c "echo this is a test"`
+01/10/14 03:44:43 - nathan - `echo moo`
+01/10/14 03:45:03 - nathan - `git pull`
+01/10/14 06:40:16 - nathan - `python3 -c 'print("xD" * 100)'`
+01/10/14 06:40:56 - nathan - `python2 -c 'print("xD" * 100)'`
+02/10/14 03:46:26 - nathan - `clear`
+02/10/14 03:48:28 - nathan - `clear`
+09/10/14 14:09:21 - nathan - `git status`
+09/10/14 14:10:04 - nathan - `ls plugins/highlight.py -lh`
+09/10/14 20:42:31 - nathan - `curl -s https://gist.githubusercontent.com/anonymous/ac5a06196370f60ef418/raw/a8065011a2d3096d5e7e65c03ae3d82ca070eb78/nathan-todo.txt | tail -n 1`
+10/10/14 20:25:58 - nathan - `echo moo`
