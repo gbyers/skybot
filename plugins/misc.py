@@ -81,7 +81,7 @@ def getinfo(inp, say=None, input=None):
     ident, rev, source = get_version()
     threads = commands.getoutput("cat /proc/%s/status | grep Threads | awk '{print $2}'"%PID)
     memory = int(commands.getoutput("cat /proc/%s/status | grep VmRSS | awk '{print $2}'"%PID))/1000
-    say("Version: %s-%s; PID: %s; Hostname: %s; Threads: %s; Virtual Memory: %s MB"%(ident,rev,os.getpid(),socket.gethostname(),threads,memory))
+    say("Version: %s-%s; PID: %s; Host: %s; Threads: %s; Virtual Memory: %s MB"%(ident,rev,os.getpid(),socket.gethostname(),threads,memory))
 
 #@hook.command(autohelp=None)
 #def update(inp, say=None):

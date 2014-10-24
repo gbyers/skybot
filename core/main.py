@@ -173,8 +173,8 @@ def main(conn, out):
 
             if isinstance(command, list):  # multiple potential matches
                 input = Input(conn, *out)
-                input.reply("did you mean %s or %s?" %
-                            (', '.join(command[:-1]), command[-1]))
+                #input.reply("did you mean %s or %s?" %
+                #            (', '.join(command[:-1]), command[-1]))
             elif command in bot.commands:
                 input = Input(conn, *out)
                 input.trigger = trigger

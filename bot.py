@@ -8,7 +8,6 @@ import time
 sys.path += ['plugins']  # so 'import hook' works without duplication
 sys.path += ['lib']
 os.chdir(sys.path[0] or '.')  # do stuff relative to the install directory
-os.environ['TZ'] = 'Europe/London'
 
 class Bot(object):
     pass

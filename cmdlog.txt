@@ -10,3 +10,27 @@
 09/10/14 14:10:04 - nathan - `ls plugins/highlight.py -lh`
 09/10/14 20:42:31 - nathan - `curl -s https://gist.githubusercontent.com/anonymous/ac5a06196370f60ef418/raw/a8065011a2d3096d5e7e65c03ae3d82ca070eb78/nathan-todo.txt | tail -n 1`
 10/10/14 20:25:58 - nathan - `echo moo`
+12/10/14 16:56:24 - nathan - `df -h`
+12/10/14 16:56:40 - nathan - `df -h | egrep '(Name|sda)'`
+12/10/14 16:56:48 - nathan - `df -h | egrep '(File|sda)'`
+12/10/14 23:22:01 - nathan - `it`
+12/10/14 23:22:05 - nathan - `git stats`
+12/10/14 23:22:07 - nathan - `git staus`
+12/10/14 23:22:09 - nathan - `git status`
+12/10/14 23:22:30 - nathan - `git moo`
+12/10/14 23:23:29 - nathan - `git commit -m 'useless commit'`
+12/10/14 23:23:47 - nathan - `git push`
+13/10/14 12:25:52 - doge - `host 184.98.163.222`
+13/10/14 13:35:06 - doge - `eject -T /dev/cdrom`
+13/10/14 13:37:02 - doge - `eject --help`
+13/10/14 13:37:36 - doge - `eject -Xv /dev/cdrom`
+13/10/14 13:37:53 - doge - `sudo eject -Xv /dev/cdrom`
+13/10/14 14:48:17 - nathan - `uptime`
+13/10/14 14:48:48 - nathan - `w`
+19/10/14 22:07:50 - nathan - `vnstat -tr | egrep '(tr)x'`
+20/10/14 22:29:02 - nathan - `date`
+21/10/14 17:42:07 - nathan - `export PS1='\w'; echo $PS1`
+22/10/14 14:12:04 - nathan - `uname -a`
+23/10/14 12:50:35 - nathan - `ls persist -l | grep sub`
+23/10/14 13:16:03 - nathan - `ls -l | grep readme`
+24/10/14 09:17:32 - nathan - `host --help`
