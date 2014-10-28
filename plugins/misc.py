@@ -194,3 +194,9 @@ def cuddlerape(inp, input=None):
         else: output = ""
         output+= "http://u.cuddlerape.me/u/%s"%f
         input.say(output)
+
+@hook.command
+def git(inp, input=None):
+    if input.prefix in [":nathan!nathan@i.am.rly.sx"]:
+        output = commands.getoutput("git add .; git commit -m '%s'; git push"%inp)
+        return output
