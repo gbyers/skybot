@@ -328,7 +328,7 @@ def kick(inp, conn=None, input=None, db=None):
 
 @hook.command
 def mute(inp, conn=None, input=None, db=None):
-    "mute <user> -- quiets nick in current channel"
+    "mute <user> -- quiets nick in current channel (+b ~q:)"
     if inp.count(" ") >= 1:
         user = inp.split(" ")[0]
     else:
@@ -345,7 +345,7 @@ def mute(inp, conn=None, input=None, db=None):
 
 @hook.command
 def unmute(inp, conn=None, input=None, db=None):
-    "unmute <user> -- unquiets nick in current channel"
+    "unmute <user> -- unquiets nick in current channel  (-b ~q:)"
     if inp.count(" ") >= 1:
         user = inp.split(" ")[0]
     else:
@@ -362,7 +362,7 @@ def unmute(inp, conn=None, input=None, db=None):
 
 @hook.command
 def quiet(inp, conn=None, input=None, db=None):
-    "mute <user> -- quiets nick in current channel"
+    "mute <user> -- quiets nick in current channel (+q)"
     if inp.count(" ") >= 1:
         user = inp.split(" ")[0]
     else:
@@ -379,7 +379,7 @@ def quiet(inp, conn=None, input=None, db=None):
 
 @hook.command
 def unquiet(inp, conn=None, input=None, db=None):
-    "mute <user> -- unquiets nick in current channel"
+    "mute <user> -- unquiets nick in current channel (-q)"
     if inp.count(" ") >= 1:
         user = inp.split(" ")[0]
     else:
@@ -399,8 +399,8 @@ def acl(inp, input=None, conn=None, db=None):
     if inp.split()[0] == "add":
         return str(conn.server)
 
-autoOpNicks = ["chintu","nathan","ducky","google","nathan_","ddl","dragondemonlord"]
-autoOpChans = ["#","&","&torrent"]
+autoOpNicks = ["chintu","nathan","ducky","google","nathan_","[]"]
+autoOpChans = ["#"]
 @hook.event('JOIN')
 def doJoin(inp, input=None, conn=None):
     conn.cmd("WHO %s"%input.chan)
