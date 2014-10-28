@@ -34,3 +34,4 @@ def _privmsg(inp, input=None, conn=None):
     bad+= ")"
     m = re.search(bad,inp[1],re.I)
     if m: conn.cmd("KICK %s %s :Badword detected"%(input.chan,input.nick))
+

@@ -93,3 +93,4 @@ def active(inp, db=None, notice=None, input=None, say=None):
     say("%s: %s active in %s in the last 30 minutes."%(input.nick,c,chan))
     if users:
         notice("Active nicks: "+", ".join(users))
+

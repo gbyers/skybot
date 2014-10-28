@@ -5,11 +5,6 @@ import time, commands, re, random, base64
 users = []
 channels = {}
 
-#@hook.event("PING")
-#@hook.event("PONG")
-#def test(inp,bot=None,conn=None,input=None):
-#    bot.save
-
 @hook.command
 def toggleignore(inp,bot=None,input=None,db=None):
     if getPerms(input,db) == 101:
@@ -50,17 +45,7 @@ def togglecommand(inp,bot=None,input=None,db=None):
                 return "Enabled %s"%inp
         else:
             return "Disabled commands: "+", ".join(bot.config["disabled_commands"])
-"""
-@hook.event("PRIVMSG")
-def privmsg_debug(inp,input=None,conn=None,bot=None):
-    if input.nick == input.chan: input.chan = "PM"
-    if conn.server == "b0rked.ducky.ws" and inp[1][0:2] == "~~" and len(inp[1]) > 2:
-        conn.cmd("PRIVMSG #services :-\00306%s\003@%s/\00312%s\003 used command: %s"%(input.nick,input.host,input.chan,inp[1]))
-    elif conn.server == "freenode.ducky.ws" and inp[1][0:2] == "~~" and len(inp[1]) > 2:
-        conn.cmd("PRIVMSG @##cup-bot :-\00306%s\003@%s/\00312%s\003 used command: %s"%(input.nick,input.host,input.chan,inp[1]))
-    elif conn.server == "opera.ducky.ws" and inp[1][0:2] == "~~" and len(inp[1]) > 2:
-        conn.cmd("PRIVMSG &#here :-\00306%s\003@%s/\00312%s\003 used command: %s"%(input.nick,input.host,input.chan,inp[1]))
-"""
+
 def getPerms(input,db):
     db.execute("create table if not exists permissions (user,level,added,time)")
     db.commit()
@@ -137,7 +122,6 @@ def runshell(inp, input=None, say=None, db=None, notice=None, conn=None):
                 f.write("Output of `%s`\n------------------------------------------\n\n"%inp.encode("utf8","ignore"))
                 for line in output:
                     f.write(line.decode('utf8','ignore')+"\n")
-                    #notice(line.decode('utf8','ignore'))
                 f.close()
                 return "http://http.102.xe.zyr.io"+fname.replace("/srv/http","")
         else: return status
@@ -159,8 +143,6 @@ def drink(inp, conn=None, say=None, input=None):
         elif n == 9: say("\001ACTION throws %s a bottle of cola\001"%input.nick)
         elif n == 10: return "Sorry, i'm all out of drinks"
 
-
-# >> :sunrise.overdrive.pw 352 nathan #chat Iota uga.electrocode.net kawaii.overdrive.pw Iota` H :2 This is my happy face.. 3:
 @hook.command
 def who(inp, conn=None):
     #commands.getoutput("rm www/test.html")
@@ -189,26 +171,6 @@ def event_352(inp, conn=None, say=None, db=None):
     #f.write(output)
     #f.close()
 
-@hook.command
-def checkban(inp, input=None, notice=None, db=None):
-    "checkban <nick!ident@host> -- checks how many people will be banned in current channel"
-    if getPerms(input,db) >= 30:
-        c = 0
-        willbeaffected = []
-        for nick in channels[input.chan.lower()]:
-            fullhost = "%s!%s@%s"%(channels[input.chan.lower()][nick]["nick"],channels[input.chan.lower()][nick]["ident"],channels[input.chan.lower()][nick]["host"])
-            m =  re.match(inp.replace("*","(.*?)"),fullhost)
-            if m:
-                c=c+1
-                willbeaffected.append(channels[input.chan.lower()][nick]["nick"])
-        if c == 0: notice("Nobody will be affected.")
-        elif c == 1:
-            notice("1 user will be affected.")
-            notice("; ".join(willbeaffected))
-        else:
-            notice("%s users will be affected."%str(c))
-            notice("; ".join(willbeaffected))
-
 @hook.command(autohelp=False)
 def cycle(inp, input=None, conn=None, db=None):
     "cycle [channel] -- cycles active channel or channel"
@@ -236,11 +198,6 @@ def raw(inp, conn=None, input=None, db=None):
         }
         out = inp.format(**f)
         conn.cmd(out)
-
-@hook.command
-def action(inp, conn=None, input=None, db=None):
-    if getPerms(input,db) >= 10:
-        conn.cmd("PRIVMSG %s :\001ACTION %s\001"%(input.chan,inp))
 
 @hook.command("perm")
 @hook.command

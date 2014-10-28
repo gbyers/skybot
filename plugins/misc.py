@@ -31,12 +31,6 @@ def rejoin(paraml, conn=None, notice=None):
             conn.join(paraml[0])
             notice("If you want me to leave the channel, /kick %s 0"%conn.nick)
 
-#join channels when invited
-#@hook.event('INVITE')
-#def invite(paraml, conn=None):
-#    conn.join(paraml[-1])
-
-
 @hook.event('004')
 def onjoin(paraml, conn=None):
     # identify to services
@@ -72,7 +66,6 @@ def ping(inp, notice=None, bot=None):
     notice('\x01PING %s\x01' % reply)
     bot.save
 
-
 @hook.command("gi",autohelp=False)
 @hook.command(autohelp=False)
 def getinfo(inp, say=None, input=None):
@@ -82,27 +75,6 @@ def getinfo(inp, say=None, input=None):
     threads = commands.getoutput("cat /proc/%s/status | grep Threads | awk '{print $2}'"%PID)
     memory = int(commands.getoutput("cat /proc/%s/status | grep VmRSS | awk '{print $2}'"%PID))/1000
     say("Version: %s-%s; PID: %s; Host: %s; Threads: %s; Virtual Memory: %s MB"%(ident,rev,os.getpid(),socket.gethostname(),threads,memory))
-
-#@hook.command(autohelp=None)
-#def update(inp, say=None):
-#    p = subprocess.Popen(['git', 'log', '--oneline'], stdout=subprocess.PIPE)
-#    stdout, _ = p.communicate()
-#    p.wait()
-#    curver = stdout.split(None, 1)[0]
-#    page = http.get("https://github.com/nathan0/skybot/commits/master")
-#    ver = re.search("""<span class="sha">(.*)<span class="octicon octicon-arrow-small-right"><\/span><\/span>""",page)
-#    lupd = re.search("""<a href="\/nathan0\/skybot\/commit\/(.*)" class="message" data-pjax="true" title="(.*)">(.*)<\/a>""",page)
-#    if ver and lupd:
-#        if ver.group(1)[0:7] != curver:
-#            say("Current: %s Newest changes: %s - %s"%(curver,lupd.group(3),lupd.group(1)[0:7]))
-#            p = subprocess.Popen(['git', 'pull', 'origin', 'master'], stdout=subprocess.PIPE)
-#            stdout, _ = p.communicate()
-#            p.wait()
-#            say("Updated")
-#        else:
-#            return "Already up-to-date."
-#    else:
-#        return "Unable to check current version."
 
 @hook.command(autohelp=False)
 def source(inp):
@@ -163,37 +135,6 @@ def showuptime(inp):
     f.close()
     uptime = timesince.timesince(float(uptime))
     return "I have been online for %s"%uptime
-
-#@hook.command
-#def restart(inp, conn=None):
-#    conn.cmd("QUIT :Restarting")
-#    PID = os.getpid()
-#    commands.getoutput("kill %s;python2 bot.py"%PID)
-"""
-@hook.regex("(karkat|pipey)")
-def add(inp, input=None, conn=None):
-    if conn.server == "subluminal.znc.rly.sx":
-        c = random.randint(0,3)
-        n = 0
-        while n <= c:
-            conn.cmd("PRIVMSG | :.add")
-            time.sleep(0.8)
-            n = n+1
-"""
-@hook.command
-def cuddlerape(inp, input=None):
-    if input.prefix in [":nathan!nathan@dukdukd.uk",":doge!~cups@botters/doge",":nathan!nathan@rly.sx",":nathan!nathan@-"] and input.server in ["subluminal.znc.rly.sx","overdrive.ducky.ws","opera.ducky.ws"]:
-        if inp.count(" ") == 1:
-            img = inp.split(" ")[1]
-            nsfw = inp.split(" ")[0]
-        else:
-            img = inp
-            nsfw = None
-        f = commands.getoutput("ls /srv/http/cuddlerape.me/upload/u/ -l | grep %s | awk '{print $9}'"%img)
-        if nsfw: output = "\002\00304[NSFW]\003\002 "
-        else: output = ""
-        output+= "http://u.cuddlerape.me/u/%s"%f
-        input.say(output)
 
 @hook.command
 def git(inp, input=None):

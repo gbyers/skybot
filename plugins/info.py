@@ -23,3 +23,4 @@ def info(inp, inpt=None, db=None):
         return "%s || %s"%(i[0],i[1])
     else:
         return "No info for %s"%inp
+
