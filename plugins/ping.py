@@ -3,6 +3,7 @@ import time
 
 pings = {}
 versions = {}
+ctcps = {}
 
 @hook.command(autohelp=False)
 def ping(inp, input=None, conn=None):
@@ -40,4 +41,22 @@ def _ping(inp, input=None, conn=None):
         version = input.msg.replace("\001VERSION ","").replace("\001","")
         chan = versions[input.nick.lower()]
         conn.send("PRIVMSG %s :VERSION reply from %s: %s"%(chan,input.nick,version))
-        del versions[input.nick.lower()]
+        #del versions[input.nick.lower()]
+    
+    if input.nick.lower() in ctcps:
+        version = input.msg.replace("\001 ","").replace("\001","")
+        chan = ctcps[input.nick.lower()]
+        conn.send("PRIVMSG %s :CTCP reply from %s: %s"%(chan,input.nick,version))
+        del ctcps[input.nick.lower()]
+
+@hook.command
+def ctcp(inp, input=None, conn=None):
+    if inp:
+        if inp[0] != "#":
+            to,cmd = inp.split(" ",1)
+            ctcps[to.lower()] = "%s"%(input.chan)
+            conn.send("PRIVMSG %s :\001%s\001"%(to,cmd))
+    else:
+        ctcps[input.nick.lower()] = "%s"%(input.chan)
+        conn.send("PRIVMSG %s :\001%s\001"%(input.nick,cmd))
+
