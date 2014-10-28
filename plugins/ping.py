@@ -19,15 +19,13 @@ def ping(inp, input=None, conn=None):
 @hook.command(autohelp=False)
 def version(inp, input=None, conn=None):
     "version [nick] -- returns version for you or [nick]"
-    if inp[0] != "#":
-        if inp:
+    if inp:
+        if inp[0] != "#":
             versions[inp.lower()] = input.chan
             conn.send("PRIVMSG %s :\001VERSION\001"%(inp))
-        else:
-            versions[input.nick.lower()] = input.chan
-            conn.send("PRIVMSG %s :\001VERSION\001"%(input.nick))
     else:
-        return "Cannot CTCP channels"
+        versions[input.nick.lower()] = input.chan
+        conn.send("PRIVMSG %s :\001VERSION\001"%(input.nick))
 
 @hook.event('NOTICE')
 def _ping(inp, input=None, conn=None):
@@ -37,6 +35,7 @@ def _ping(inp, input=None, conn=None):
         _ptime = str(time.time() - float(_p.split(";")[1]))[0:5]
         conn.send("PRIVMSG %s :PING reply from %s: %s seconds"%(chan,input.nick,_ptime))
         del pings[input.nick.lower()]
+
     if input.nick.lower() in versions:
         version = input.msg.replace("\001VERSION ","").replace("\001","")
         chan = versions[input.nick.lower()]

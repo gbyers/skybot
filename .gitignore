@@ -16,3 +16,4 @@ www
 plugins/eval.py
 uptime
 cmdlog.txt
+disabled-plugins

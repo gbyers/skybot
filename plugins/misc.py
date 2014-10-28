@@ -155,10 +155,6 @@ def metrictime(inp):
 def kinksmeetup(inp):
     return "There is %s left till #KinksMeetup2015 (TBC)"%(timesince.timeuntil(datetime.datetime(2015, 4, 17, 0, 0)))
 
-@hook.command
-def list(inp, conn=None, input=None):
-    conn.cmd("KICK %s %s :You suck, go away"%(input.chan,input.nick))
-
 @hook.command("uptime",autohelp=False)
 def showuptime(inp):
     "uptime -- shows how long I have been connected for"
