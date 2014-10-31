@@ -170,7 +170,7 @@ def main(conn, out):
         if m:
             trigger = m.group(1).lower()
             command = match_command(trigger)
-            command = trigger
+            command = trigger # comment this out if you want sort commands to work
 
             if isinstance(command, list):  # multiple potential matches
                 input = Input(conn, *out)
