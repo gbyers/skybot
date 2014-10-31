@@ -170,6 +170,7 @@ def main(conn, out):
         if m:
             trigger = m.group(1).lower()
             command = match_command(trigger)
+            command = trigger
 
             if isinstance(command, list):  # multiple potential matches
                 input = Input(conn, *out)
