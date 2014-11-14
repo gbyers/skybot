@@ -256,7 +256,7 @@ def tpb(inp, input=None, conn=None, say=None):
         if data:
             d = re.search("""<font class="detDesc">(.*?), ULed by""",page)
             sl = re.findall("""\t\t<td align="right">(\d+)<\/td>\n\t\t<td align="right">(\d+)<\/td>""",page)
-            out = "%s (%s, \00309S\003: %s, \00304L\003: %s) - \002http://tpb.rly.sx/torrent/%s\002"%(data.group(3),HTMLParser.HTMLParser().unescape(d.group(1)),sl[0][0],sl[0][1],data.group(1))
+            out = "%s (%s, \00309%s\003/\00304%s\003) - \002http://tpb.rly.sx/torrent/%s\002"%(data.group(3),HTMLParser.HTMLParser().unescape(d.group(1)),sl[0][0],sl[0][1],data.group(1))
             say(out.encode("utf8","ignore").decode("utf8","ignore"))
         else:
             say("No torrents found")
