@@ -51,8 +51,7 @@ def getPerms(input,db):
     db.commit()
     #return 101
     user = input.user+"@"+input.host
-    #user = "%@"+input.host
-    data = db.execute("select user,level from permissions where user LIKE (?)",(user,)).fetchone()
+    data = db.execute("select user,level from permissions where user = ?",(user,)).fetchone()
     if data:
         return int(data[1])
     else:

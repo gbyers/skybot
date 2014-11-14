@@ -17,3 +17,4 @@ plugins/eval.py
 uptime
 cmdlog.txt
 disabled-plugins
+plugins/bsx.fr.py

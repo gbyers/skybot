@@ -77,7 +77,7 @@ def getWeather(loc,nick):
             output += " Forecast: "+forecast.group(2)
         return output
     else:
-        return "Location not found."
+        return "Location not found. Check http://classic.wunderground.com/cgi-bin/findweather/getForecast?query={}&wuSelect=WEATHER".format(loc)
 
 @hook.command('w',autohelp=False)
 @hook.command(autohelp=False)

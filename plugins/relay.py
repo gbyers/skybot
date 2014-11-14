@@ -9,7 +9,7 @@ ignoreNicks = []
 trusted = [
     "gateway/web/b0rked.me/ip.127.0.0.69",
     "botters/doge",
-    "dukdukd.uk",
+    "i.am.rly.sx",
     "-",
 ]
 

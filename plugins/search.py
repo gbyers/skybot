@@ -135,7 +135,8 @@ def zeroclick(inp, say=None, input=None):
             else: return ("No results")
         else:
             return ("No results found.")
-
+@hook.command("google")
+@hook.command("g")
 @hook.command
 def ddg(inp, say=None):
     "ddg <search> -- search DuckDuckGo"
@@ -163,6 +164,10 @@ def googleplay(inp, say=None):
 def firefox(inp, say=None):
     "firefox/ff <search> -- search for Firefox addons"
     _search(inp+" site:addons.mozilla.org", say)
+
+@hook.command
+def amazon(inp, say=None):
+    _search(inp+" site:amazon.com", say)
 
 @hook.command("wiki")
 @hook.command
@@ -212,7 +217,7 @@ def suggest(inp, input=None, conn=None, say=None):
             l=[]
             for sug in suggestions:
                 sug = HTMLParser.HTMLParser().unescape(sug).replace(inp,"\002%s\002"%inp)
-                if n <= 5:
+                if n <= 3:
                     say("%s. %s"%(n,sug))
                     #time.sleep(0.75)
                     n=n+1
@@ -251,7 +256,7 @@ def tpb(inp, input=None, conn=None, say=None):
         if data:
             d = re.search("""<font class="detDesc">(.*?), ULed by""",page)
             sl = re.findall("""\t\t<td align="right">(\d+)<\/td>\n\t\t<td align="right">(\d+)<\/td>""",page)
-            out = "%s (%s, \00309S\003: %s, \00304L\003: %s) - \002http://thepiratebay.se/torrent/%s\002"%(data.group(3),HTMLParser.HTMLParser().unescape(d.group(1)),sl[0][0],sl[0][1],data.group(1))
+            out = "%s (%s, \00309S\003: %s, \00304L\003: %s) - \002http://tpb.rly.sx/torrent/%s\002"%(data.group(3),HTMLParser.HTMLParser().unescape(d.group(1)),sl[0][0],sl[0][1],data.group(1))
             say(out.encode("utf8","ignore").decode("utf8","ignore"))
         else:
             say("No torrents found")
@@ -266,3 +271,19 @@ def mcnametaken(inp, input=None, conn=None):
         if "TAKEN" in p: return "%s is taken."%inp
         else: return "%s is not taken."%inp
 
+@hook.command
+def roboduck(inp, input=None):
+    answer = requests.get("https://duck.co/roboduck/json?"+urllib.urlencode({"q":inp})).json()["answer"]
+    return re.sub("\s+", " ", re.sub('<[^<]+?>', '', answer))
+
+@hook.command
+def qrcode(inp, input=None):
+    "Usage: qrcode <text/url/number>"
+    return "http://chart.apis.google.com/chart?cht=qr&chs=300x300&{}".format(urllib.urlencode({"chl":inp}))
+
+@hook.command
+def btsync(inp):
+    "Usage: btsync <key> <name> -- generate qrcode for the lazy"
+    if inp.count(" ") == 1:
+        data = "btsync://{}?n={}".format(inp.split(" ",1)[0],inp.split(" ",1)[1])
+        return "http://chart.apis.google.com/chart?cht=qr&chs=300x300&{}".format(urllib.urlencode({"chl":data}))

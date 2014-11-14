@@ -41,7 +41,7 @@ def _ping(inp, input=None, conn=None):
         version = input.msg.replace("\001VERSION ","").replace("\001","")
         chan = versions[input.nick.lower()]
         conn.send("PRIVMSG %s :VERSION reply from %s: %s"%(chan,input.nick,version))
-        #del versions[input.nick.lower()]
+        del versions[input.nick.lower()]
     
     if input.nick.lower() in ctcps:
         version = input.msg.replace("\001 ","").replace("\001","")
