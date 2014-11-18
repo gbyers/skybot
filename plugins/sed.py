@@ -34,7 +34,10 @@ def sed_save(inp,input=None,conn=None,db=None):
 """
 @hook.command
 def sqlite(inp, input=None, db=None):
-    if input.nick.lower() in ["nathan","doge","c[_]"]:
+    #if input.nick.lower() in ["nathan","doge"]:
+    if "doge!~cups@botters/doge" in input.prefix or "nathan!nathan@-" in input.prefix or 
+"nathan!nathan@i.am.rly.sx" 
+in input.prefix:
         try:
             output = db.execute(inp).fetchall()
             db.commit()
