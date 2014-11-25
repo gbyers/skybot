@@ -138,6 +138,6 @@ def showuptime(inp):
 
 @hook.command
 def git(inp, input=None):
-    if input.prefix in [":nathan!nathan@i.am.rly.sx"]:
+    if input.prefix == ":nathan!nathan@i.am.rly.sx":
         output = commands.getoutput("git add .; git commit -m '%s'; git push"%inp).replace("\n"," ").replace("  "," ")
         return output
