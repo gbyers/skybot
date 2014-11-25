@@ -287,3 +287,8 @@ def btsync(inp):
     if inp.count(" ") == 1:
         data = "btsync://{}?n={}".format(inp.split(" ",1)[0],inp.split(" ",1)[1])
         return "http://chart.apis.google.com/chart?cht=qr&chs=300x300&{}".format(urllib.urlencode({"chl":data}))
+
+
+@hook.command
+def berkin(inp):
+    return requests.post("http://berkin.me/probox/run",data={"nsfw":"true","code":inp}).json()["result"]
