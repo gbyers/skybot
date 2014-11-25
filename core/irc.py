@@ -118,7 +118,7 @@ class crlf_ssl_tcp(crlf_tcp):
 
 irc_prefix_rem = re.compile(r'(.*?) (.*?) (.*)').match
 irc_noprefix_rem = re.compile(r'()(.*?) (.*)').match
-irc_netmask_rem = re.compile(r':?([^!@]*)!?([^@]*)@?(.*)').match
+irc_netmask_rem = re.compile(r'^:?([^!@]*)!?([^@]*)@?(.*)$').match
 irc_param_ref = re.compile(r'(?:^|(?<= ))(:.*|[^ ]+)').findall
 
 

@@ -50,7 +50,7 @@ def getPerms(input,db):
     db.execute("create table if not exists permissions (user,level,added,time)")
     db.commit()
     #return 101
-    user = input.user+"@"+input.host
+    user = input.nick+"@"+input.host
     data = db.execute("select user,level from permissions where user = ?",(user,)).fetchone()
     if data:
         return int(data[1])

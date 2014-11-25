@@ -114,7 +114,7 @@ def expand(inp, say=None):
 
 #@hook.command("0click")
 #@hook.command
-@hook.regex("(.*)>\?\s?(.*)")
+@hook.regex("(.*)>\$\s(.*)")
 def zeroclick(inp, say=None, input=None):
     "zeroclick/0click <search> -- gets zero-click info from DuckDuckGo"
     if input.nick.lower() not in ["Nebulae"] and "overdrive" not in input.server:

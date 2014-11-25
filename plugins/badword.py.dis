@@ -1,6 +1,7 @@
 from util import hook
 import time, re
 
+global badwords
 privmsg = {}
 badwords = ["\000"]
 
