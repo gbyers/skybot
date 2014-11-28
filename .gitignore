@@ -19,3 +19,4 @@ plugins/bsx.fr.py
 testfile
 *~
 *.save*
+plugins/push.py
