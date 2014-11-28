@@ -20,3 +20,4 @@ disabled-plugins
 plugins/bsx.fr.py
 testfile
 plugins/push.py
+*~
