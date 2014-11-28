@@ -1,0 +1,45 @@
+from util import hook, timesince
+from websocket import create_connection
+import json, requests, time
+
+pushRunning = False
+
+@hook.command
+def push(inp, input=None, say=None):
+    global pushRunning
+    global ws
+    if input.prefix == ":nathan!nathan@i.am.rly.sx":
+        if pushRunning == False:
+            pushRunning = True
+            say("push started")
+            ws = create_connection("wss://stream.pushbullet.com/websocket/V8jGL6JVLh0srJAOvAYNP2ZfPUzRFFU7")
+            while pushRunning:
+                wsReply = json.loads(ws.recv())
+                if wsReply["type"] == "tickle":
+                    if wsReply["subtype"] == "push":
+                        r = requests.get("https://api.pushbullet.com/v2/pushes?modified_after={}".format(time.time()-1), auth=("V8jGL6JVLh0srJAOvAYNP2ZfPUzRFFU7","")).json()
+                        r = r["pushes"][0]
+                        t = r["type"]
+                        print r
+                        output = ""
+                        if t == "link":
+                            if r.has_key("body"):
+                                output+= "{} ".format(r["body"])
+                            output+= "\00302{}\003".format(r["url"])
+                            #output+= " ({} ago)".format(timesince.timesince(r["created"]))
+                        if t == "note":
+                            if r.has_key("title"):
+                                output+= "{} - ".format(r["title"])
+                            else: output+= r["body"]
+                            #output+= " ({} ago)".format(timesince.timesince(r["created"]))
+                        say("Push from nathan: {}".format(output))
+        if pushRunning == True:
+            ws.close()
+            pushRunning == False
+            say("push stopped")
+
+@hook.command
+def pushstatus(inp, input=None):
+    global pushRunning
+    if input.prefix == ":nathan!nathan@i.am.rly.sx":
+        return pushRunning
