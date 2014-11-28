@@ -3,14 +3,12 @@
 *.orig
 persist
 config
-config~
 pep8.py
 .project
 .pydevproject
 *.db
 web
 plugins/torrent.py
-age
 age
 www
 plugins/eval.py
@@ -19,5 +17,6 @@ cmdlog.txt
 disabled-plugins
 plugins/bsx.fr.py
 testfile
-plugins/push.py
 *~
+*.save*
+plugins/push.py
